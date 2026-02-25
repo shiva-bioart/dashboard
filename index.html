@@ -49,7 +49,7 @@
         }
 
         .header-section {
-            padding: 20px 0;
+            padding: 15px 0; /* Um pouco mais de respiro vertical */
         }
 
         .btn-purple { background-color: var(--brand-purple); color: #fff; border-color: var(--brand-purple); }
@@ -74,7 +74,10 @@
         .filter-wrapper.d-none { display: none !important; }
         
         .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .logo-img { max-height: 60px; width: auto; object-fit: contain; }
+        
+        /* Ajuste na Logo para ser fluída */
+        .logo-img { max-height: 60px; max-width: 100%; width: auto; object-fit: contain; }
+        
         .date-active { border-color: var(--brand-purple) !important; background-color: rgba(94, 57, 144, 0.05) !important; font-weight: bold; }
         .cursor-pointer { cursor: pointer; }
     </style>
@@ -124,17 +127,17 @@
         <div class="sticky-top header-wrapper">
             <header class="header-section pb-2 border-bottom border-light">
                 <div class="container-fluid px-4">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 d-flex align-items-center">
-                            <img src="dashboard-logo.png" alt="Shiva Care Logo" class="logo-img me-3">
+                    <div class="row align-items-center text-center text-md-start">
+                        <div class="col-12 col-md-7 d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start">
+                            <img src="dashboard-logo.png" alt="Shiva Care Logo" class="logo-img mb-2 mb-md-0 me-md-3 img-fluid">
                             <div>
-                                <h2 class="mb-0 fw-bold" style="color: #5E3990;">Dashboard Estratégico</h2>
-                                <p class="mb-0" style="color: #727376;">Shiva Care - Análise de Dados</p>
+                                <h2 class="mb-0 fw-bold fs-4 fs-md-3" style="color: #5E3990;">Dashboard Estratégico</h2>
+                                <p class="mb-0 small" style="color: #727376;">Shiva Care - Análise de Dados</p>
                             </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button id="btnShowUpload" class="btn btn-outline-purple py-2 px-3 fw-bold me-2 d-none"><i class="fas fa-database me-1"></i> Atualizar Base</button>
-                            <button id="btnToggleFilters" class="btn btn-outline-purple py-2 px-3 fw-bold d-none"><i class="fas fa-filter me-1"></i> Filtros</button>
+                        <div class="col-12 col-md-5 text-center text-md-end mt-3 mt-md-0">
+                            <button id="btnShowUpload" class="btn btn-outline-purple py-2 px-3 fw-bold me-2 mb-2 mb-md-0 d-none"><i class="fas fa-database me-1"></i> Atualizar Base</button>
+                            <button id="btnToggleFilters" class="btn btn-outline-purple py-2 px-3 fw-bold mb-2 mb-md-0 d-none"><i class="fas fa-filter me-1"></i> Filtros</button>
                         </div>
                     </div>
                 </div>
@@ -142,7 +145,7 @@
 
             <div id="titleBar" class="d-none pt-2 pb-3 bg-white">
                 <div class="container-fluid px-4 text-center">
-                    <h3 id="dynamicTitle" class="fw-bold mb-1" style="color: #334155;">Carregando Análise...</h3>
+                    <h3 id="dynamicTitle" class="fw-bold mb-1 fs-5 fs-md-4" style="color: #334155;">Carregando Análise...</h3>
                     <hr style="width: 60px; margin: 0 auto; border-color: var(--brand-purple); border-width: 4px; border-radius: 2px; opacity: 1;">
                 </div>
             </div>
@@ -203,7 +206,7 @@
                             <div id="yearCompList" class="d-flex flex-wrap gap-3">
                                 </div>
                         </div>
-                        <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+                        <div class="col-md-6 text-center text-md-end d-flex justify-content-center justify-content-md-end gap-2 mt-3 mt-md-0">
                             <button class="btn btn-outline-secondary fw-bold px-4 py-2" onclick="clearDates()">Limpar Datas</button>
                             <button id="btnFilter" class="btn btn-purple fw-bold px-4 py-2"><i class="fas fa-check-circle me-2"></i>Aplicar Filtros</button>
                         </div>
@@ -514,7 +517,7 @@
                 `); 
             });
 
-            // --- INTELIGÊNCIA: DEFINE O FILTRO INICIAL BASEADO NA DATA MAIS RECENTE ---
+            // Inteligência do Filtro: Seleciona o mês mais recente disponível
             let maxDate = new Date(0);
             AppState.rawSales.forEach(d => {
                 if (d.dateObj && d.dateObj > maxDate) maxDate = d.dateObj;
