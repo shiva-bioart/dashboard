@@ -496,7 +496,7 @@
         function initFilters() {
             const years = [...new Set(AppState.rawSales.map(d => d.year))].sort((a,b) => b-a);
             const yearSelect = document.getElementById('filterYear'); yearSelect.innerHTML = '';
-            years.forEach(y => yearSelect.appendChild(new Option(y, y))); AppState.filters.year = years[0]; 
+            years.forEach(y => yearSelect.appendChild(new Option(y, y))); 
 
             const monthSelect = document.getElementById('filterMonth'); monthSelect.innerHTML = '<option value="all">Todos</option>';
             Utils.monthNames.forEach((name, index) => monthSelect.appendChild(new Option(name, index + 1)));
@@ -513,6 +513,17 @@
                     </div>
                 `); 
             });
+
+            // --- INTELIGÊNCIA: DEFINE O FILTRO INICIAL BASEADO NA DATA MAIS RECENTE ---
+            let maxDate = new Date(0);
+            AppState.rawSales.forEach(d => {
+                if (d.dateObj && d.dateObj > maxDate) maxDate = d.dateObj;
+            });
+
+            if (maxDate.getTime() > 0) {
+                document.getElementById('filterYear').value = maxDate.getFullYear();
+                document.getElementById('filterMonth').value = maxDate.getMonth() + 1;
+            }
         }
 
         function applyFilters() {
