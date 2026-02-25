@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Estratégico - Shiva Care</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --brand-purple: #5E3990;
+            --brand-purple-hover: #4a2c73;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            padding-bottom: 50px;
+        }
+
+        /* TELA DE LOGIN */
+        .login-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--light-bg);
+            z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            width: 100%; max-width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* CABEÇALHO FIXO */
+        .header-wrapper {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 1040;
+        }
+
+        .header-section {
+            padding: 20px 0;
+        }
+
+        .btn-purple { background-color: var(--brand-purple); color: #fff; border-color: var(--brand-purple); }
+        .btn-purple:hover { background-color: var(--brand-purple-hover); color: #fff; border-color: var(--brand-purple-hover); }
+        .btn-outline-purple { color: var(--brand-purple); border-color: var(--brand-purple); background-color: transparent; }
+        .btn-outline-purple:hover { background-color: var(--brand-purple); color: #fff; border-color: var(--brand-purple); }
+
+        .kpi-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: var(--card-shadow); height: 100%; transition: transform 0.2s; border-left: 4px solid var(--accent-color); }
+        .kpi-card:hover { transform: translateY(-5px); }
+        .kpi-title { font-size: 0.85rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; white-space: nowrap; }
+        .kpi-value { font-size: 1.6rem; font-weight: 700; color: var(--primary-color); }
+        .kpi-subtext { font-size: 0.8rem; margin-top: 5px; }
+        .kpi-positive { color: var(--success-color); }
+        .kpi-negative { color: var(--danger-color); }
+
+        .chart-container { background: #fff; border-radius: 10px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 25px; height: 400px; position: relative; }
+        .chart-container.large { height: 500px; }
+        .section-title { font-size: 1.2rem; font-weight: 600; color: var(--secondary-color); margin-bottom: 15px; border-left: 4px solid var(--primary-color); padding-left: 10px; }
+        #map { height: 100%; width: 100%; border-radius: 8px; }
+
+        .filter-wrapper { background: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 2px dashed #adb5bd; transition: all 0.3s ease; }
+        .filter-wrapper.d-none { display: none !important; }
+        
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .logo-img { max-height: 60px; width: auto; object-fit: contain; }
+        .date-active { border-color: var(--brand-purple) !important; background-color: rgba(94, 57, 144, 0.05) !important; font-weight: bold; }
+        .cursor-pointer { cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card card border-0 p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="mb-3 d-flex justify-content-center">
+                    <div style="width: 60px; height: 60px; background-color: var(--brand-purple); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-lock text-white fs-3"></i>
+                    </div>
+                </div>
+                <h4 class="fw-bold" style="color: var(--brand-purple);">Acesso Restrito</h4>
+                <p class="text-muted small">Insira suas credenciais para visualizar o painel.</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small text-secondary">Usuário</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-muted"></i></span>
+                    <input type="text" id="loginUser" class="form-control border-start-0" placeholder="ex: shiva">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-secondary">Senha</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-key text-muted"></i></span>
+                    <input type="password" id="loginPass" class="form-control border-start-0" placeholder="••••••••">
+                </div>
+            </div>
+            <div id="loginError" class="alert alert-danger d-none small py-2 text-center fw-bold">
+                <i class="fas fa-exclamation-circle me-1"></i> Usuário ou senha incorretos.
+            </div>
+            <button id="btnLogin" class="btn btn-purple w-100 fw-bold py-2 mt-2">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="loading" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+        <h4 class="mt-3">Acessando Base de Dados...</h4>
+        <p class="text-muted small">Carregando dados estruturados</p>
+    </div>
+
+    <div id="appContent" style="display: none;">
+        
+        <div class="sticky-top header-wrapper">
+            <header class="header-section pb-2 border-bottom border-light">
+                <div class="container-fluid px-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 d-flex align-items-center">
+                            <img src="dashboard-logo.png" alt="Shiva Care Logo" class="logo-img me-3">
+                            <div>
+                                <h2 class="mb-0 fw-bold" style="color: #5E3990;">Dashboard Estratégico</h2>
+                                <p class="mb-0" style="color: #727376;">Shiva Care - Análise de Dados</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button id="btnShowUpload" class="btn btn-outline-purple py-2 px-3 fw-bold me-2 d-none"><i class="fas fa-database me-1"></i> Atualizar Base</button>
+                            <button id="btnToggleFilters" class="btn btn-outline-purple py-2 px-3 fw-bold d-none"><i class="fas fa-filter me-1"></i> Filtros</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="titleBar" class="d-none pt-2 pb-3 bg-white">
+                <div class="container-fluid px-4 text-center">
+                    <h3 id="dynamicTitle" class="fw-bold mb-1" style="color: #334155;">Carregando Análise...</h3>
+                    <hr style="width: 60px; margin: 0 auto; border-color: var(--brand-purple); border-width: 4px; border-radius: 2px; opacity: 1;">
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid px-4 mt-4">
+            
+            <div id="uploadContainer" class="filter-wrapper d-none">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">1. Planilha de Vendas (CSV)</label>
+                        <input type="file" id="fileSales" class="form-control py-2" accept=".csv">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold">2. Planilha de Ads (CSV)</label>
+                        <input type="file" id="fileAds" class="form-control py-2" accept=".csv">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button id="btnLoadData" class="btn btn-purple py-2 w-100 fw-bold"><i class="fas fa-upload me-2"></i>Carregar Manual</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="filterContainer" class="filter-wrapper d-none mb-4">
+                <div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Ano Principal</label>
+                            <select id="filterYear" class="form-select"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Mês</label>
+                            <select id="filterMonth" class="form-select"><option value="all">Todos</option></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Segmento</label>
+                            <select id="filterSegment" class="form-select">
+                                <option value="all">Todos</option><option value="Beleza">Beleza</option><option value="Biossegurança">Biossegurança</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold">Canal</label>
+                            <select id="filterChannel" class="form-select"><option value="all">Todos</option></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-primary">Início (Opcional)</label>
+                            <input type="date" id="dateStart" class="form-control" onchange="highlightDate()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-primary">Fim (Opcional)</label>
+                            <input type="date" id="dateEnd" class="form-control" onchange="highlightDate()">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center mt-3 border-top border-secondary border-opacity-25 pt-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold mb-2">Comparar com Ano(s) - Gráfico Evolução</label>
+                            <div id="yearCompList" class="d-flex flex-wrap gap-3">
+                                </div>
+                        </div>
+                        <div class="col-md-6 text-end d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-secondary fw-bold px-4 py-2" onclick="clearDates()">Limpar Datas</button>
+                            <button id="btnFilter" class="btn btn-purple fw-bold px-4 py-2"><i class="fas fa-check-circle me-2"></i>Aplicar Filtros</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="main-dashboard" class="d-none">
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #3498db;"><div class="kpi-title">Receita Total</div><div class="kpi-value" id="kpi-revenue">R$ 0,00</div><div class="kpi-subtext" id="kpi-revenue-comp">--</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #27ae60;"><div class="kpi-title">Resultado Operacional</div><div class="kpi-value" id="kpi-profit">R$ 0,00</div><div class="kpi-subtext" id="kpi-profit-comp">--</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #9b59b6;"><div class="kpi-title">Itens Vendidos</div><div class="kpi-value" id="kpi-qty">0</div><div class="kpi-subtext" id="kpi-qty-comp">--</div></div></div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #ce93d8;"><div class="kpi-title">Higienizadores (Beleza)</div><div class="kpi-value" id="kpi-higienizadores">0</div><div class="kpi-subtext" id="kpi-higienizadores-comp">--</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #e67e22;"><div class="kpi-title">Investimento Ads</div><div class="kpi-value" id="kpi-ads-inv">R$ 0,00</div><div class="kpi-subtext" id="kpi-roas">ROAS: 0.0</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #34495e;"><div class="kpi-title">Receita Ads vs Orgânica</div><div class="d-flex justify-content-between align-items-end"><div><div class="small text-muted">Ads</div><div class="fw-bold fs-5" id="kpi-rev-ads" style="color: var(--primary-color);">R$ 0</div></div><div class="text-end"><div class="small text-muted">Orgânico</div><div class="fw-bold fs-5" id="kpi-rev-org" style="color: var(--primary-color);">R$ 0</div></div></div></div></div>
+                </div>
+
+                <h4 class="section-title">Evolução e Performance Financeira</h4>
+                <div class="row mb-4">
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="text-muted" style="font-size: 0.95rem;">Evolução Mensal (Receita x Resultado Op.)</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoAno" onclick="updateEvolutionChartRange('year')">Ano Fiscal</button>
+                                    <button type="button" class="btn btn-outline-secondary active" id="btnEvo6" onclick="updateEvolutionChartRange(6)">6 Meses</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvo12" onclick="updateEvolutionChartRange(12)">12 Meses</button>
+                                </div>
+                            </div>
+                            <canvas id="chartEvolution"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Composição do Faturamento</h6><canvas id="chartCostComp"></canvas></div></div>
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Faturamento por Segmento</h6><canvas id="chartSegmentPie"></canvas></div></div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="text-muted">Investimento Ads vs ROAS</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active" id="btnAds6" onclick="updateAdsChartRange(6)">6 Meses</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnAds12" onclick="updateAdsChartRange(12)">12 Meses</button>
+                                </div>
+                            </div>
+                            <canvas id="chartAds"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <h4 class="section-title">Análise por Canal de Venda</h4>
+                    <div class="col-lg-6"><div class="chart-container"><h6 class="text-center text-muted">Composição de Faturamento (Empilhada)</h6><canvas id="chartChannelFin"></canvas></div></div>
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted">Faturamento por Canal</h6><canvas id="chartChannelPie"></canvas></div></div>
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted">Volume por Canal</h6><canvas id="chartChannelQty"></canvas></div></div>
+                </div>
+
+                <div class="row mb-4">
+                    <h4 class="section-title">Top Produtos por Segmento</h4>
+                    <div class="col-md-6"><div class="chart-container"><h6 class="text-center text-muted" style="color: #ce93d8;">Beleza - Top 6 Modelos (Qtd)</h6><canvas id="chartTopBeleza"></canvas></div></div>
+                    <div class="col-md-6"><div class="chart-container"><h6 class="text-center text-muted" style="color: #a5d6a7;">Biossegurança - Top 6 Modelos (Qtd)</h6><canvas id="chartTopBio"></canvas></div></div>
+                </div>
+
+                <div class="row mb-4">
+                    <h4 class="section-title">Distribuição Geográfica de Vendas</h4>
+                    <div class="col-12">
+                        <div class="chart-container large" style="height: 600px;">
+                            <div class="d-flex justify-content-end mb-2 position-absolute" style="top: 20px; right: 30px; z-index: 1000;">
+                                <div class="btn-group btn-group-sm bg-white shadow-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active" id="btnMapPeriodo" onclick="updateMapRange('period')">Período Selecionado</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnMap6" onclick="updateMapRange(6)">6 Meses</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnMap12" onclick="updateMapRange(12)">12 Meses</button>
+                                </div>
+                            </div>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <script>
+        // ====== SISTEMA DE LOGIN ======
+        document.getElementById('btnLogin').addEventListener('click', handleLogin);
+        document.getElementById('loginPass').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        function handleLogin() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            
+            if (user.toLowerCase() === 'shiva' && pass === '2026') {
+                document.getElementById('loginOverlay').classList.add('d-none');
+                document.getElementById('appContent').style.display = 'block';
+                startDashboardAutoLoad();
+            } else {
+                document.getElementById('loginError').classList.remove('d-none');
+            }
+        }
+
+        // ====== CONFIGURAÇÕES GRÁFICOS ======
+        Chart.register(ChartDataLabels);
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+        Chart.defaults.plugins.tooltip.titleFont = { size: 14, weight: 'bold' };
+        Chart.defaults.plugins.tooltip.bodyFont = { size: 13 };
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
+        Chart.defaults.plugins.tooltip.displayColors = true;
+        Chart.defaults.plugins.tooltip.boxPadding = 4;
+        Chart.defaults.plugins.tooltip.usePointStyle = true;
+
+        const AppState = {
+            rawSales: [], rawAds: [], filteredSales: [], filteredAds: [], geoJsonBrazil: null, charts: {}, echartMap: null,
+            filters: { year: null, month: 'all', segment: 'all', channel: 'all', startDate: null, endDate: null, compareYears: [] },
+            currentYearMonths: []
+        };
+
+        const stateCoordinates = {
+            'AC': [-9.0238, -70.8120], 'AL': [-9.5713, -36.7820], 'AP': [0.9020, -52.0030], 'AM': [-3.4168, -65.8561], 'BA': [-12.5797, -41.7007], 'CE': [-5.4984, -39.3206],
+            'DF': [-15.7998, -47.8645], 'ES': [-19.1834, -40.3089], 'GO': [-15.8270, -49.8362], 'MA': [-5.6102, -45.2344], 'MT': [-12.6819, -56.9211], 'MS': [-20.7722, -54.7816],
+            'MG': [-18.5122, -44.5550], 'PA': [-1.9981, -54.9306], 'PB': [-7.2399, -36.7820], 'PR': [-25.2521, -52.0215], 'PE': [-8.8137, -36.9541], 'PI': [-7.7183, -42.7289],
+            'RJ': [-22.9099, -43.1729], 'RN': [-5.4026, -36.9541], 'RS': [-30.0346, -51.2177], 'RO': [-11.5057, -63.5806], 'RR': [2.7376, -62.0751], 'SC': [-27.2423, -50.2189],
+            'SP': [-23.5505, -46.6333], 'SE': [-10.5741, -37.3857], 'TO': [-10.1753, -48.2982]
+        };
+
+        const Utils = {
+            parseCurrency: (str) => { if (!str) return 0; if (typeof str === 'number') return str; return parseFloat(str.replace('R$', '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.')) || 0; },
+            formatCurrency: (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val),
+            formatCompact: (val) => Intl.NumberFormat('pt-BR', { notation: "compact", maximumFractionDigits: 1 }).format(val),
+            parseDate: (str) => { if (!str) return null; const parts = str.split('/'); if (parts.length !== 3) return null; return new Date(parts[2], parts[1] - 1, parts[0]); },
+            monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            monthMap: { 'Janeiro': 1, 'Fevereiro': 2, 'Março': 3, 'Abril': 4, 'Maio': 5, 'Junho': 6, 'Julho': 7, 'Agosto': 8, 'Setembro': 9, 'Outubro': 10, 'Novembro': 11, 'Dezembro': 12 },
+            normalizeChannel: (channelName) => {
+                if (!channelName) return "Outros"; const lower = channelName.toLowerCase();
+                if (lower.includes("mercado livre")) return "Mercado Livre"; if (lower.includes("amazon")) return "Amazon"; if (lower.includes("shopee")) return "Shopee";
+                if (lower.includes("magalu")) return "Magalu"; if (lower.includes("loja integrada")) return "Loja Integrada"; if (lower.includes("distribuidor")) return "Distribuidor";
+                return channelName; 
+            },
+            mapAdsChannelToSalesChannel: (adsChannel) => {
+                if (adsChannel === "Mercado Ads") return "Mercado Livre"; if (adsChannel === "Amazon Ads") return "Amazon";
+                if (adsChannel === "Google Ads" || adsChannel === "Meta Ads") return "Loja Integrada"; return "Outros";
+            }
+        };
+
+        function startDashboardAutoLoad() {
+            document.getElementById('loading').style.display = 'flex';
+            
+            Promise.all([
+                new Promise((resolve, reject) => Papa.parse('vendas.csv', { download: true, header: true, skipEmptyLines: true, complete: resolve, error: reject })),
+                new Promise((resolve, reject) => Papa.parse('ads.csv', { download: true, header: true, skipEmptyLines: true, complete: resolve, error: reject })),
+                fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/brazil-states.geojson').then(r => r.json())
+            ]).then(([salesResult, adsResult, geoJson]) => {
+                
+                if(geoJson.features) {
+                    geoJson.features.forEach(f => { if(f.properties && f.properties.sigla) f.properties.name = f.properties.sigla; });
+                }
+                
+                processRawData(salesResult.data, adsResult.data);
+                AppState.geoJsonBrazil = geoJson;
+                echarts.registerMap('BRAZIL', geoJson);
+
+                initFilters();
+                applyFilters(); 
+                
+                document.getElementById('btnShowUpload').classList.remove('d-none');
+                document.getElementById('btnToggleFilters').classList.remove('d-none');
+                document.getElementById('titleBar').classList.remove('d-none');
+                document.getElementById('main-dashboard').classList.remove('d-none');
+                document.getElementById('main-dashboard').classList.remove('hidden');
+
+                document.getElementById('loading').style.display = 'none';
+
+            }).catch(err => {
+                console.warn("Auto-load falhou. Exibindo upload manual.", err);
+                document.getElementById('loading').style.display = 'none';
+                
+                const uploadBox = document.getElementById('uploadContainer');
+                uploadBox.classList.remove('d-none');
+                uploadBox.classList.remove('hidden');
+                uploadBox.insertAdjacentHTML('beforebegin', `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Aviso de Segurança:</strong> O navegador bloqueou a leitura automática dos arquivos. Faça o upload manual abaixo.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `);
+            });
+        }
+
+        document.getElementById('btnShowUpload').addEventListener('click', () => {
+             document.getElementById('uploadContainer').classList.remove('d-none');
+             document.getElementById('uploadContainer').classList.remove('hidden');
+             document.getElementById('filterContainer').classList.add('d-none');
+             document.getElementById('btnShowUpload').classList.add('d-none');
+        });
+
+        document.getElementById('btnToggleFilters').addEventListener('click', () => {
+            document.getElementById('filterContainer').classList.toggle('d-none');
+        });
+
+        document.getElementById('btnFilter').addEventListener('click', () => {
+            applyFilters();
+            document.getElementById('filterContainer').classList.add('d-none');
+        });
+
+        document.getElementById('btnLoadData').addEventListener('click', () => {
+            const fileSales = document.getElementById('fileSales').files[0];
+            const fileAds = document.getElementById('fileAds').files[0];
+            
+            if (!fileSales || !fileAds) { alert("Por favor, selecione ambos os arquivos CSV."); return; }
+            
+            document.getElementById('loading').style.display = 'flex';
+            
+            Promise.all([
+                new Promise(resolve => Papa.parse(fileSales, { header: true, skipEmptyLines: true, complete: resolve })),
+                new Promise(resolve => Papa.parse(fileAds, { header: true, skipEmptyLines: true, complete: resolve })),
+                fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/brazil-states.geojson').then(r => r.json())
+            ]).then(([salesResult, adsResult, geoJson]) => {
+                if(geoJson.features) { geoJson.features.forEach(f => { if(f.properties && f.properties.sigla) f.properties.name = f.properties.sigla; }); }
+                
+                processRawData(salesResult.data, adsResult.data);
+                AppState.geoJsonBrazil = geoJson;
+                echarts.registerMap('BRAZIL', geoJson);
+                
+                initFilters();
+                applyFilters(); 
+                
+                const alertBox = document.querySelector('.alert-warning');
+                if(alertBox) alertBox.remove();
+
+                document.getElementById('uploadContainer').classList.add('d-none');
+                document.getElementById('btnShowUpload').classList.remove('d-none');
+                document.getElementById('btnToggleFilters').classList.remove('d-none');
+                document.getElementById('filterContainer').classList.remove('d-none');
+                
+                document.getElementById('titleBar').classList.remove('d-none');
+                document.getElementById('main-dashboard').classList.remove('d-none');
+                document.getElementById('main-dashboard').classList.remove('hidden');
+
+                document.getElementById('loading').style.display = 'none';
+            });
+        });
+
+        window.highlightDate = function() {
+            const hasDate = !!(document.getElementById('dateStart').value || document.getElementById('dateEnd').value);
+            document.getElementById('filterYear').disabled = hasDate;
+            document.getElementById('filterMonth').disabled = hasDate;
+            document.getElementById('dateStart').classList.toggle('date-active', hasDate);
+            document.getElementById('dateEnd').classList.toggle('date-active', hasDate);
+        };
+
+        window.clearDates = function() {
+            document.getElementById('dateStart').value = ''; document.getElementById('dateEnd').value = ''; highlightDate();
+        };
+
+        function processRawData(salesData, adsData) {
+            AppState.rawSales = salesData.map(row => {
+                const date = Utils.parseDate(row['DATA']);
+                return {
+                    ...row, dateObj: date, year: date ? date.getFullYear() : 0, month: date ? date.getMonth() + 1 : 0,
+                    valBruto: Utils.parseCurrency(row['VALOR BRUTO']), valLucro: Utils.parseCurrency(row['Resultado Operacional'] || row['Lucro']),
+                    valTaxas: Utils.parseCurrency(row['TAXAS']), valFrete: Utils.parseCurrency(row['FRETE']), valCusto: Utils.parseCurrency(row['Custo Variavel Total']),
+                    valImposto: Utils.parseCurrency(row['Imposto_NF']), qtd: parseInt(row['QTDE']) || 0, normChannel: Utils.normalizeChannel(row['Canais']), MODELO: row['MODELO']
+                };
+            }).filter(d => d.dateObj);
+
+            AppState.rawAds = adsData.map(row => {
+                const salesAds = parseFloat(row['Qntd_Vendas_Ads']) || 0; const salesOrg = parseFloat(row['Qntd_Vendas_Organica']) || 0;
+                return {
+                    ...row, monthNum: Utils.monthMap[row['Mes']] || 0, year: parseInt(row['Ano']) || 0, valInvest: Utils.parseCurrency(row['Investimento']),
+                    salesAds, salesOrg, totalSalesUnit: salesAds + salesOrg, salesChannelNorm: Utils.mapAdsChannelToSalesChannel(row['Canal_Ads'])
+                };
+            });
+        }
+
+        function initFilters() {
+            const years = [...new Set(AppState.rawSales.map(d => d.year))].sort((a,b) => b-a);
+            const yearSelect = document.getElementById('filterYear'); yearSelect.innerHTML = '';
+            years.forEach(y => yearSelect.appendChild(new Option(y, y))); AppState.filters.year = years[0]; 
+
+            const monthSelect = document.getElementById('filterMonth'); monthSelect.innerHTML = '<option value="all">Todos</option>';
+            Utils.monthNames.forEach((name, index) => monthSelect.appendChild(new Option(name, index + 1)));
+
+            const chanSelect = document.getElementById('filterChannel'); chanSelect.innerHTML = '<option value="all">Todos</option>';
+            [...new Set(AppState.rawSales.map(d => d.normChannel))].sort().forEach(c => chanSelect.appendChild(new Option(c, c)));
+
+            const yearCompList = document.getElementById('yearCompList'); yearCompList.innerHTML = '';
+            years.forEach(y => { 
+                yearCompList.insertAdjacentHTML('beforeend', `
+                    <div class="form-check m-0">
+                        <input class="form-check-input year-comp-chk cursor-pointer" type="checkbox" value="${y}" id="chkYear${y}">
+                        <label class="form-check-label cursor-pointer" for="chkYear${y}">${y}</label>
+                    </div>
+                `); 
+            });
+        }
+
+        function applyFilters() {
+            AppState.filters.year = parseInt(document.getElementById('filterYear').value);
+            AppState.filters.month = document.getElementById('filterMonth').value;
+            AppState.filters.segment = document.getElementById('filterSegment').value;
+            AppState.filters.channel = document.getElementById('filterChannel').value;
+            AppState.filters.compareYears = Array.from(document.querySelectorAll('.year-comp-chk:checked')).map(c => parseInt(c.value));
+
+            const startVal = document.getElementById('dateStart').value; const endVal = document.getElementById('dateEnd').value;
+            AppState.filters.startDate = startVal ? new Date(startVal.split('-')[0], startVal.split('-')[1]-1, startVal.split('-')[2], 0, 0, 0) : null;
+            AppState.filters.endDate = endVal ? new Date(endVal.split('-')[0], endVal.split('-')[1]-1, endVal.split('-')[2], 23, 59, 59) : null;
+
+            const titleEl = document.getElementById('dynamicTitle');
+            if (AppState.filters.startDate || AppState.filters.endDate) {
+                const s = AppState.filters.startDate ? String(AppState.filters.startDate.getDate()).padStart(2, '0') + '/' + String(AppState.filters.startDate.getMonth() + 1).padStart(2, '0') + '/' + String(AppState.filters.startDate.getFullYear()).substring(2) : '...';
+                const e = AppState.filters.endDate ? String(AppState.filters.endDate.getDate()).padStart(2, '0') + '/' + String(AppState.filters.endDate.getMonth() + 1).padStart(2, '0') + '/' + String(AppState.filters.endDate.getFullYear()).substring(2) : '...';
+                titleEl.innerText = `Análise de Dados: ${s} a ${e}`;
+            } else {
+                const year = AppState.filters.year;
+                titleEl.innerText = AppState.filters.month === 'all' ? `Análise de Dados do Ano de ${year}` : `Análise de Dados: ${Utils.monthNames[parseInt(AppState.filters.month) - 1].toUpperCase()} de ${year}`;
+            }
+
+            const filterFn = (d) => {
+                let match = true;
+                if (AppState.filters.startDate || AppState.filters.endDate) {
+                    if (AppState.filters.startDate && d.dateObj < AppState.filters.startDate) match = false;
+                    if (AppState.filters.endDate && d.dateObj > AppState.filters.endDate) match = false;
+                } else {
+                    if (d.year !== AppState.filters.year) match = false;
+                    if (AppState.filters.month !== 'all' && d.month !== parseInt(AppState.filters.month)) match = false;
+                }
+                if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) match = false;
+                if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) match = false;
+                return match;
+            };
+
+            AppState.filteredSales = AppState.rawSales.filter(filterFn);
+            AppState.currentYearMonths = [...new Set(AppState.filteredSales.map(d => d.month))];
+
+            AppState.filteredAds = AppState.rawAds.filter(d => {
+                let match = true;
+                if (AppState.filters.startDate || AppState.filters.endDate) {
+                     const adDateStart = new Date(d.year, d.monthNum - 1, 1); const adDateEnd = new Date(d.year, d.monthNum, 0); 
+                     if (AppState.filters.startDate && adDateEnd < AppState.filters.startDate) match = false;
+                     if (AppState.filters.endDate && adDateStart > AppState.filters.endDate) match = false;
+                } else {
+                    if (d.year !== AppState.filters.year) match = false;
+                    if (AppState.filters.month !== 'all' && d.monthNum !== parseInt(AppState.filters.month)) match = false;
+                }
+                if (AppState.filters.channel !== 'all' && d.salesChannelNorm !== AppState.filters.channel) match = false;
+                return match;
+            });
+
+            updateKPIs(); renderCharts(); renderMap();
+        }
+
+        function updateKPIs() {
+            const currentSales = AppState.filteredSales; const currentAds = AppState.filteredAds;
+            const totalRev = currentSales.reduce((acc, curr) => acc + curr.valBruto, 0);
+            const totalProfit = currentSales.reduce((acc, curr) => acc + curr.valLucro, 0);
+            const totalQty = currentSales.reduce((acc, curr) => acc + curr.qtd, 0);
+            const totalAdsInv = currentAds.reduce((acc, curr) => acc + curr.valInvest, 0);
+            const totalHigienizadores = currentSales.filter(d => d['SEGMENTO'] === 'Beleza').reduce((acc, curr) => acc + curr.qtd, 0);
+
+            let adsRevenue = 0, organicRevenue = 0; const adsRatioMap = {};
+            AppState.rawAds.forEach(ad => { adsRatioMap[`${ad.year}-${ad.monthNum}-${ad.salesChannelNorm}`] = ad.totalSalesUnit > 0 ? (ad.salesAds / ad.totalSalesUnit) : 0; });
+            currentSales.forEach(sale => {
+                const ratio = adsRatioMap[`${sale.year}-${sale.month}-${sale.normChannel}`] || 0;
+                adsRevenue += sale.valBruto * ratio; organicRevenue += sale.valBruto * (1 - ratio);
+            });
+
+            document.getElementById('kpi-revenue').innerText = Utils.formatCurrency(totalRev);
+            document.getElementById('kpi-profit').innerText = Utils.formatCurrency(totalProfit);
+            document.getElementById('kpi-qty').innerText = totalQty.toLocaleString('pt-BR');
+            document.getElementById('kpi-higienizadores').innerText = totalHigienizadores.toLocaleString('pt-BR');
+            document.getElementById('kpi-ads-inv').innerText = Utils.formatCurrency(totalAdsInv);
+            document.getElementById('kpi-roas').innerText = `ROAS: ${totalAdsInv > 0 ? (adsRevenue / totalAdsInv).toFixed(2) : "0.00"}`;
+            document.getElementById('kpi-rev-ads').innerText = Utils.formatCurrency(adsRevenue);
+            document.getElementById('kpi-rev-org').innerText = Utils.formatCurrency(organicRevenue);
+
+            let prevSales = []; let compLabel = "";
+            if (AppState.filters.startDate || AppState.filters.endDate) {
+                let prevStart = AppState.filters.startDate ? new Date(AppState.filters.startDate) : null;
+                let prevEnd = AppState.filters.endDate ? new Date(AppState.filters.endDate) : null;
+                if(prevStart) prevStart.setFullYear(prevStart.getFullYear() - 1);
+                if(prevEnd) prevEnd.setFullYear(prevEnd.getFullYear() - 1);
+                prevSales = AppState.rawSales.filter(d => {
+                    if (prevStart && d.dateObj < prevStart) return false;
+                    if (prevEnd && d.dateObj > prevEnd) return false;
+                    if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return false;
+                    if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return false;
+                    return true;
+                });
+                compLabel = "Mesmo Período Ano Ant.";
+            } else {
+                const prevYear = AppState.filters.year - 1;
+                prevSales = AppState.rawSales.filter(d => d.year === prevYear && AppState.currentYearMonths.includes(d.month) && (AppState.filters.segment === 'all' || d['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || d.normChannel === AppState.filters.channel));
+                compLabel = `${prevYear} (${AppState.filters.month === 'all' ? 'Ano' : 'Mês'})`;
+            }
+            
+            const prevRev = prevSales.reduce((a,c) => a + c.valBruto, 0); const prevProfit = prevSales.reduce((a,c) => a + c.valLucro, 0);
+            const prevQty = prevSales.reduce((a,c) => a + c.qtd, 0); const prevHigienizadores = prevSales.filter(d => d['SEGMENTO'] === 'Beleza').reduce((a,c) => a + c.qtd, 0);
+
+            const formatComp = (curr, prev) => {
+                if (prev === 0) return "N/A";
+                const pct = ((curr - prev) / prev) * 100;
+                return `<span class="${pct >= 0 ? 'kpi-positive' : 'kpi-negative'}"><i class="fas ${pct >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'}"></i> ${pct.toFixed(1)}% vs ${compLabel}</span>`;
+            };
+
+            document.getElementById('kpi-revenue-comp').innerHTML = formatComp(totalRev, prevRev); document.getElementById('kpi-profit-comp').innerHTML = formatComp(totalProfit, prevProfit);
+            document.getElementById('kpi-qty-comp').innerHTML = formatComp(totalQty, prevQty); document.getElementById('kpi-higienizadores-comp').innerHTML = formatComp(totalHigienizadores, prevHigienizadores);
+        }
+
+        function getAdColor(channel) {
+            const name = channel.toLowerCase();
+            if (name.includes('mercado')) return '#f1c40f'; if (name.includes('amazon')) return '#e67e22'; if (name.includes('google')) return '#3498db'; if (name.includes('meta') || name.includes('facebook')) return '#9b59b6'; return '#95a5a6';
+        }
+
+        function getChannelColor(channelName) {
+            const name = channelName.toLowerCase();
+            if (name.includes('mercado livre') || name.includes('mercado ads')) return '#fdd835'; if (name.includes('loja integrada') || name.includes('google') || name.includes('meta')) return '#1e88e5'; if (name.includes('distribuidor')) return '#43a047'; if (name.includes('amazon')) return '#fb8c00'; return '#78909c';
+        }
+
+        function renderCharts() { destroyCharts(); renderEvolutionChart(6); renderSegmentPie(); renderCostComposition(); renderAdsChart(6); renderChannelCharts(); renderTopProducts(); }
+        function destroyCharts() { Object.values(AppState.charts).forEach(c => c.destroy()); AppState.charts = {}; }
+
+        function renderCostComposition() {
+            let totalCusto = 0, totalImposto = 0, totalTaxas = 0, totalFrete = 0, totalMargin = 0;
+            AppState.filteredSales.forEach(d => { totalCusto += d.valCusto; totalImposto += d.valImposto; totalTaxas += d.valTaxas; totalFrete += d.valFrete; totalMargin += d.valLucro; });
+
+            AppState.charts.costComp = new Chart(document.getElementById('chartCostComp').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Custo Variável', 'Impostos', 'Taxas', 'Fretes', 'Resultado Operacional'],
+                    datasets: [{ data: [totalCusto, totalImposto, totalTaxas, totalFrete, totalMargin], backgroundColor: ['#bdc3c7', '#e67e22', '#f1c40f', '#3498db', '#27ae60'], borderWidth: 1 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, layout: { padding: 30 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+                        datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value*100 / sum).toFixed(1)}%)`; } },
+                        tooltip: { callbacks: { label: (c) => c.label + ': ' + Utils.formatCurrency(c.parsed) } }
+                    }
+                }
+            });
+        }
+
+        function renderEvolutionChart(monthsBack = null) {
+            const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
+            document.querySelectorAll('#btnEvoAno, #btnEvo6, #btnEvo12').forEach(b => b.classList.remove('active'));
+            if (!isCustomDate) { if(monthsBack === 6) document.getElementById('btnEvo6').classList.add('active'); else if(monthsBack === 12) document.getElementById('btnEvo12').classList.add('active'); else document.getElementById('btnEvoAno').classList.add('active'); }
+
+            let labels = [], revData = [], profData = [], barColors = [], expectedKeys = [];
+
+            if (isCustomDate) {
+                const agg = {}; AppState.filteredSales.forEach(d => { const key = `${d.year}-${String(d.month).padStart(2,'0')}`; if(!agg[key]) agg[key] = { rev: 0, luc: 0 }; agg[key].rev += d.valBruto; agg[key].luc += d.valLucro; });
+                expectedKeys = Object.keys(agg).sort(); labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`);
+                revData = expectedKeys.map(k => agg[k].rev); profData = expectedKeys.map(k => agg[k].luc); barColors = expectedKeys.map(() => '#ab47bc'); 
+            } else if (monthsBack === null) {
+                labels = Utils.monthNames.map(m => m.substring(0,3)); const months = Array.from({length: 12}, (_, i) => i + 1);
+                revData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valBruto,0));
+                profData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valLucro,0));
+                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#ab47bc' : '#bdc3c7');
+            } else {
+                let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
+                const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
+                let curr = new Date(startDate); for(let i=0; i<monthsBack; i++) { expectedKeys.push(`${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}`); curr.setMonth(curr.getMonth() + 1); }
+                const agg = {}; AppState.rawSales.forEach(d => { if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return; const key = `${d.year}-${String(d.month).padStart(2,'0')}`; if(expectedKeys.includes(key)) { if(!agg[key]) agg[key] = { rev: 0, luc: 0 }; agg[key].rev += d.valBruto; agg[key].luc += d.valLucro; } });
+                labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`); revData = expectedKeys.map(k => agg[k] ? agg[k].rev : 0); profData = expectedKeys.map(k => agg[k] ? agg[k].luc : 0);
+                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#ab47bc' : '#bdc3c7'; });
+            }
+
+            const datasets = [ { label: `Receita`, data: revData, backgroundColor: barColors, yAxisID: 'y', order: 3, datalabels: { display: false } }, { label: `Resultado Operacional`, data: profData, borderColor: '#27ae60', type: 'line', yAxisID: 'y', order: 1, datalabels: { display: false } } ];
+
+            AppState.filters.compareYears.forEach((compYear, index) => {
+                let compData = []; const colorLine = ['rgba(231, 76, 60, 0.8)', 'rgba(52, 152, 219, 0.8)', 'rgba(241, 196, 15, 0.8)'][index % 3];
+                if (isCustomDate) {
+                    let prevStart = AppState.filters.startDate ? new Date(AppState.filters.startDate) : null; let prevEnd = AppState.filters.endDate ? new Date(AppState.filters.endDate) : null;
+                    if(prevStart) prevStart.setFullYear(compYear); if(prevEnd) prevEnd.setFullYear(compYear);
+                    const compAgg = {}; AppState.rawSales.filter(d => { if (prevStart && d.dateObj < prevStart) return false; if (prevEnd && d.dateObj > prevEnd) return false; if (d.year !== compYear) return false; if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return false; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return false; return true; }).forEach(d => { const mKey = String(d.month).padStart(2,'0'); if(!compAgg[mKey]) compAgg[mKey] = 0; compAgg[mKey] += d.valBruto; });
+                    compData = expectedKeys.map(k => compAgg[k.split('-')[1]] || 0);
+                } else if (monthsBack === null) {
+                    compData = Array.from({length: 12}, (_, i) => i + 1).map(m => AppState.rawSales.filter(d => d.year === compYear && d.month === m && (AppState.filters.segment === 'all' || d['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || d.normChannel === AppState.filters.channel)).reduce((a,c) => a+c.valBruto,0));
+                } else {
+                    compData = expectedKeys.map(k => AppState.rawSales.filter(d => d.year === compYear && d.month === parseInt(k.split('-')[1]) && (AppState.filters.segment === 'all' || d['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || d.normChannel === AppState.filters.channel)).reduce((a,c) => a+c.valBruto,0));
+                }
+                datasets.push({ label: `Receita (${compYear})`, data: compData, backgroundColor: colorLine, borderWidth: 0, type: 'bar', yAxisID: 'y', order: 2, datalabels: { display: false } });
+            });
+
+            if (AppState.charts.evolution) AppState.charts.evolution.destroy();
+
+            AppState.charts.evolution = new Chart(document.getElementById('chartEvolution').getContext('2d'), {
+                type: 'bar', data: { labels: labels, datasets: datasets },
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } }
+            });
+        }
+        
+        window.updateEvolutionChartRange = (val) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderEvolutionChart(val === 'year' ? null : val); };
+
+        function renderSegmentPie() {
+            const segments = { 'Beleza': 0, 'Biossegurança': 0 }; AppState.filteredSales.forEach(d => { if(segments[d['SEGMENTO']] !== undefined) segments[d['SEGMENTO']] += d.valBruto; });
+            AppState.charts.segmentPie = new Chart(document.getElementById('chartSegmentPie').getContext('2d'), {
+                type: 'doughnut', data: { labels: Object.keys(segments), datasets: [{ data: Object.values(segments), backgroundColor: ['#ce93d8', '#a5d6a7'], borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 30 }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+            });
+        }
+
+        function renderAdsChart(monthsBack) {
+            const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
+            document.querySelectorAll('#btnAds6, #btnAds12').forEach(b => b.classList.remove('active'));
+            if (!isCustomDate) { if(monthsBack === 6) document.getElementById('btnAds6').classList.add('active'); else if(monthsBack === 12) document.getElementById('btnAds12').classList.add('active'); }
+
+            const adsAgg = {}; let labels = [], expectedKeys = [];
+            if (isCustomDate) {
+                AppState.filteredAds.forEach(d => { const key = `${d.year}-${String(d.monthNum).padStart(2,'0')}`; if (!adsAgg[key]) adsAgg[key] = { inv: 0, channels: {} }; adsAgg[key].inv += d.valInvest; if(!adsAgg[key].channels[d['Canal_Ads']]) adsAgg[key].channels[d['Canal_Ads']] = 0; adsAgg[key].channels[d['Canal_Ads']] += d.valInvest; });
+                labels = expectedKeys = Object.keys(adsAgg).sort();
+            } else {
+                let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
+                const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
+                let curr = new Date(startDate); for(let i=0; i<monthsBack; i++) { expectedKeys.push(`${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}`); curr.setMonth(curr.getMonth() + 1); }
+                AppState.rawAds.forEach(d => { if (AppState.filters.channel !== 'all' && d.salesChannelNorm !== AppState.filters.channel) return; const key = `${d.year}-${String(d.monthNum).padStart(2,'0')}`; if (expectedKeys.includes(key)) { if (!adsAgg[key]) adsAgg[key] = { inv: 0, channels: {} }; adsAgg[key].inv += d.valInvest; if(!adsAgg[key].channels[d['Canal_Ads']]) adsAgg[key].channels[d['Canal_Ads']] = 0; adsAgg[key].channels[d['Canal_Ads']] += d.valInvest; } });
+                labels = expectedKeys;
+            }
+
+            const datasets = []; const allChannels = [...new Set(AppState.rawAds.map(d => d['Canal_Ads']))];
+            allChannels.forEach(ch => { const data = labels.map(l => adsAgg[l] && adsAgg[l].channels[ch] ? adsAgg[l].channels[ch] : 0); if (data.some(v => v > 0)) { datasets.push({ type: 'bar', label: ch, data: data, stack: 'Stack 0', backgroundColor: getAdColor(ch), maxBarThickness: 50, order: 2, datalabels: { display: false } }); } });
+
+            const roasData = labels.map(l => {
+                if (!adsAgg[l]) return 0; const [y, m] = l.split('-'); const inv = adsAgg[l].inv; if(inv === 0) return 0;
+                const salesInMonth = AppState.rawSales.filter(s => s.year == parseInt(y) && s.month == parseInt(m) && (AppState.filters.segment === 'all' || s['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || s.normChannel === AppState.filters.channel));
+                let attrRev = 0; salesInMonth.forEach(s => { const adEntry = AppState.rawAds.find(a => a.year == parseInt(y) && a.monthNum == parseInt(m) && a.salesChannelNorm === s.normChannel); if(adEntry && adEntry.totalSalesUnit > 0) attrRev += s.valBruto * (adEntry.salesAds / adEntry.totalSalesUnit); });
+                return (attrRev / inv);
+            });
+
+            datasets.push({ type: 'line', label: 'ROAS Global', data: roasData, borderColor: '#5E3990', backgroundColor: '#fff', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#5E3990', pointRadius: 5, tension: 0.3, yAxisID: 'y1', order: 1, datalabels: { display: true, align: 'top', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#5E3990', borderWidth: 1, borderRadius: 4, color: '#5E3990', font: { weight: 'bold', size: 10 }, formatter: (v) => v.toFixed(1) + 'x', padding: 4 } });
+
+            if (AppState.charts.ads) AppState.charts.ads.destroy();
+            AppState.charts.ads = new Chart(document.getElementById('chartAds').getContext('2d'), {
+                data: { labels: labels.map(l => `${l.split('-')[1]}/${l.split('-')[0].substring(2)}`), datasets: datasets },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y1' ? ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}x` : ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } }, scales: { y: { stacked: true, title: {display:true, text:'Investimento'}, ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } }, y1: { position: 'right', title: {display:true, text:'ROAS'}, grid: {drawOnChartArea: false}, ticks: { callback: (v) => v + 'x' } } } }
+            });
+        }
+        
+        window.updateAdsChartRange = (m) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderAdsChart(m); };
+
+        function renderChannelCharts() {
+            const agg = {}; AppState.filteredSales.forEach(d => { if (!agg[d.normChannel]) agg[d.normChannel] = { rev: 0, luc: 0, qtd: 0 }; agg[d.normChannel].rev += d.valBruto; agg[d.normChannel].luc += d.valLucro; agg[d.normChannel].qtd += d.qtd; });
+            const labels = Object.keys(agg).sort((a,b) => agg[b].rev - agg[a].rev);
+            
+            AppState.charts.chanFin = new Chart(document.getElementById('chartChannelFin').getContext('2d'), {
+                type: 'bar', data: { labels: labels, datasets: [ { label: 'Resultado Operacional', data: labels.map(l => agg[l].luc), backgroundColor: '#23BDB0', stack: 'Stack 0', datalabels: { display: false } }, { label: 'Custos e Taxas', data: labels.map(l => agg[l].rev - agg[l].luc), backgroundColor: '#5E36B3', stack: 'Stack 0', datalabels: { display: false } } ] },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, scales: { x: { stacked: true }, y: { stacked: true } }, plugins: { tooltip: { callbacks: { label: (c) => { let total = 0; c.chart.data.datasets.forEach(ds => total += ds.data[c.dataIndex]); return ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)} (${total === 0 ? "0%" : (c.parsed.y * 100 / total).toFixed(1) + "%"})`; } } } } }
+            });
+
+            AppState.charts.chanPie = new Chart(document.getElementById('chartChannelPie').getContext('2d'), {
+                type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(l => agg[l].rev), backgroundColor: labels.map(l => getChannelColor(l)) }] },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+            });
+
+            AppState.charts.chanQty = new Chart(document.getElementById('chartChannelQty').getContext('2d'), {
+                type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(l => agg[l].qtd), backgroundColor: labels.map(l => getChannelColor(l)) }] },
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value.toLocaleString('pt-BR')} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+            });
+        }
+
+        function renderTopProducts() {
+            const processTop = (segment, ctxId, colorArray) => {
+                const agg = {}; AppState.filteredSales.filter(d => d['SEGMENTO'] === segment).forEach(d => { const fullName = (d['MODELO'] || 'Desc. Inválida').trim(); if (!agg[fullName]) agg[fullName] = 0; agg[fullName] += d.qtd; });
+                const sorted = Object.entries(agg).sort((a,b) => b[1] - a[1]).slice(0, 6);
+                AppState.charts[ctxId] = new Chart(document.getElementById(ctxId).getContext('2d'), {
+                    type: 'doughnut', data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: colorArray }] },
+                    options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { position: 'right' }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+                });
+            };
+            processTop('Beleza', 'chartTopBeleza', ['#7b1fa2', '#8e24aa', '#9c27b0', '#ab47bc', '#ba68c8', '#ce93d8']);
+            processTop('Biossegurança', 'chartTopBio', ['#1b5e20', '#2e7d32', '#388e3c', '#43a047', '#4caf50', '#66bb6a']);
+        }
+
+        // --- MAP RENDERER (ECharts) ---
+        function renderMap(monthsBack = null) {
+            if (!AppState.geoJsonBrazil) return;
+            const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
+            document.querySelectorAll('#btnMapPeriodo, #btnMap6, #btnMap12').forEach(b => b.classList.remove('active'));
+            if (!isCustomDate) { if(monthsBack === 6) document.getElementById('btnMap6').classList.add('active'); else if(monthsBack === 12) document.getElementById('btnMap12').classList.add('active'); else document.getElementById('btnMapPeriodo').classList.add('active'); }
+
+            let dataToMap = [];
+            if (isCustomDate || monthsBack === null) { dataToMap = AppState.filteredSales; } else {
+                let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
+                const endDate = new Date(refYear, refMonth, 0); const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
+                dataToMap = AppState.rawSales.filter(d => { if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return false; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return false; return d.dateObj >= startDate && d.dateObj <= endDate; });
+            }
+
+            const ufAgg = {}; dataToMap.forEach(d => { const uf = d['UF'] ? d['UF'].trim().toUpperCase() : 'ND'; if(!ufAgg[uf]) ufAgg[uf] = 0; ufAgg[uf] += d.qtd; });
+            const scatterData = []; Object.keys(ufAgg).forEach(uf => { if(stateCoordinates[uf] && ufAgg[uf] > 0) scatterData.push({ name: uf, value: [stateCoordinates[uf][1], stateCoordinates[uf][0], ufAgg[uf]] }); });
+
+            if (AppState.echartMap) AppState.echartMap.dispose();
+            AppState.echartMap = echarts.init(document.getElementById('map'));
+            AppState.echartMap.setOption({ tooltip: { trigger: 'item', backgroundColor: 'rgba(15, 23, 42, 0.95)', textStyle: { color: '#fff' }, formatter: (p) => { if (!p.value || p.value.length < 3) return p.name; return `<b style="font-size: 14px;">${p.name}</b><br/>Vendas: ${p.value[2]} unid.`; } }, geo: { map: 'BRAZIL', roam: false, zoom: 1.2, aspectScale: 0.85, itemStyle: { areaColor: '#ecf0f1', borderColor: '#bdc3c7', borderWidth: 1 }, emphasis: { label: { show: true }, itemStyle: { areaColor: '#dfe6e9' } }, label: { show: true, color: '#444', fontSize: 10, formatter: (p) => p.name } }, series: [{ name: 'Vendas', type: 'scatter', coordinateSystem: 'geo', data: scatterData, symbolSize: 30, itemStyle: { color: '#8e44ad', shadowBlur: 10, shadowColor: 'rgba(142, 68, 173, 0.5)' }, label: { show: true, formatter: '{@2}', color: '#fff', fontWeight: 'bold', fontSize: 10 } }] });
+            window.addEventListener('resize', () => AppState.echartMap.resize());
+        }
+        window.updateMapRange = (val) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderMap(val === 'period' ? null : val); };
+
+    </script>
+</body>
+</html>
