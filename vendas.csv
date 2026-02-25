@@ -2306,17 +2306,3 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 29/01/2026,AHIG0435 - Preto 220V,2,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","R$ 172,23","R$ 312,04","R$ 181,73",/1
 29/01/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 156,02","R$ 195,04",6248/3
 30/01/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 0,00","R$ 351,06",6254/3
-01/02/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,PE,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 156,02","R$ 195,04",6274/3
-02/02/2026,AHIG0435 - Preto 220V,1,Distribuidor,,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","R$ 86,11","R$ 156,02","R$ 90,87",/1
-02/02/2026,"APRF0842 - Proface 3,5x",1,Mercado Livre - FULL,BA,Biossegurança,"R$ 259,00","R$ 44,03","R$ 23,45","R$ 36,88","R$ 68,20","R$ 86,44",6300/3
-03/02/2026,ALAV0379 - Cuba Ultrassonica 127V,1,Mercado Livre - FULL,MS,Biossegurança,"R$ 1.280,00","R$ 217,60","R$ 44,45","R$ 182,27","R$ 343,77","R$ 491,91",6309/3
-03/02/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,TO,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 156,02","R$ 195,04",6311/3
-04/02/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","R$ 86,11","R$ 156,02","R$ 90,87",/1
-05/02/2026,"APRF0842 - Proface 3,5x",1,Mercado Livre - FULL,MG,Biossegurança,"R$ 259,00","R$ 44,03","R$ 23,45","R$ 36,88","R$ 68,20","R$ 86,44",6313/3
-05/02/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,TO,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 156,02","R$ 195,04",6317/3
-05/02/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,RS,Beleza,"R$ 551,93","R$ 93,83","R$ 28,45","R$ 78,59","R$ 156,02","R$ 195,04",6319/3
-06/02/2026,ALAV0379 - Cuba Ultrassonica 127V,1,Mercado Livre - Envios,PE,Biossegurança,"R$ 1.280,00","R$ 217,60","R$ 44,45","R$ 182,27","R$ 0,00","R$ 835,68",6326/3
-06/02/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 44,45","R$ 78,59","R$ 0,00","R$ 335,06",6321/3
-08/02/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,TO,Beleza,"R$ 551,93","R$ 93,83","R$ 44,45","R$ 78,59","R$ 0,00","R$ 335,06",6323/3
-09/02/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","R$ 86,11","R$ 0,00","R$ 246,89",/1
-09/02/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 0,00","R$ 78,59","R$ 0,00","R$ 379,51",6328/3
