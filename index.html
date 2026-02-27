@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Estratégico - Shiva Care</title>
     
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -25,7 +32,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-bg);
-            padding-bottom: 50px;
+            padding-bottom: 25px; /* Altura reduzida em 50% (antes 50px) */
         }
 
         /* TELA DE LOGIN */
@@ -290,8 +297,8 @@
                 </div>
             </div>
             
-            <div class="text-center mt-5 mb-3 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.1.2
+            <div class="text-center mt-3 mb-1 text-muted small fw-bold">
+                Dashboard Shiva Care &bull; v1.1.4
             </div>
         </div>
     </div>
@@ -386,13 +393,15 @@
 
                 initFilters();
                 
-                // Mostra a tela, mas mantendo os filtros Ocultos (v1.1.2)
+                // MUDANÇA v1.1.1: Exibir as divs ANTES de processar os gráficos, 
+                // para que o ECharts saiba a largura exata da tela para o Mapa.
                 document.getElementById('btnShowUpload').classList.remove('d-none');
                 document.getElementById('btnToggleFilters').classList.remove('d-none');
                 document.getElementById('titleBar').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('hidden');
 
+                // Agora que o container está visível, podemos renderizar
                 applyFilters(); 
 
                 document.getElementById('loading').style.display = 'none';
@@ -460,11 +469,11 @@
                 const alertBox = document.querySelector('.alert-warning');
                 if(alertBox) alertBox.remove();
 
-                // Mostra a tela, mas mantendo os filtros Ocultos (v1.1.2)
+                // MUDANÇA v1.1.1: Exibir as divs ANTES de processar os gráficos.
                 document.getElementById('uploadContainer').classList.add('d-none');
                 document.getElementById('btnShowUpload').classList.remove('d-none');
                 document.getElementById('btnToggleFilters').classList.remove('d-none');
-                
+                document.getElementById('filterContainer').classList.remove('d-none');
                 document.getElementById('titleBar').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('hidden');
@@ -528,6 +537,7 @@
                 `); 
             });
 
+            // --- INTELIGÊNCIA: DEFINE O FILTRO INICIAL BASEADO NA DATA MAIS RECENTE ---
             let maxDate = new Date(0);
             AppState.rawSales.forEach(d => {
                 if (d.dateObj && d.dateObj > maxDate) maxDate = d.dateObj;
