@@ -32,7 +32,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--light-bg);
-            padding-bottom: 25px; /* Altura reduzida em 50% (antes 50px) */
+            padding-bottom: 25px; 
         }
 
         /* TELA DE LOGIN */
@@ -232,14 +232,14 @@
                     <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card" style="border-left-color: #34495e;"><div class="kpi-title">Receita Ads vs Orgânica</div><div class="d-flex justify-content-between align-items-end"><div><div class="small text-muted">Ads</div><div class="fw-bold fs-5" id="kpi-rev-ads" style="color: var(--primary-color);">R$ 0</div></div><div class="text-end"><div class="small text-muted">Orgânico</div><div class="fw-bold fs-5" id="kpi-rev-org" style="color: var(--primary-color);">R$ 0</div></div></div></div></div>
                 </div>
 
-                <h4 class="section-title">Evolução e Performance Financeira</h4>
+                <h4 class="section-title">Evolução Mensal</h4>
                 <div class="row mb-4">
                     <div class="col-lg-6">
                         <div class="chart-container">
                             <div class="d-flex justify-content-between mb-2">
-                                <h6 class="text-muted" style="font-size: 0.95rem;">Evolução Mensal (Receita x Resultado Op.)</h6>
+                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Resultado Op.</h6>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoAno" onclick="updateEvolutionChartRange('year')">Ano Fiscal</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoPeriodo" onclick="updateEvolutionChartRange('year')">Período Selecionado</button>
                                     <button type="button" class="btn btn-outline-secondary active" id="btnEvo6" onclick="updateEvolutionChartRange(6)">6 Meses</button>
                                     <button type="button" class="btn btn-outline-secondary" id="btnEvo12" onclick="updateEvolutionChartRange(12)">12 Meses</button>
                                 </div>
@@ -248,12 +248,24 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Composição do Faturamento</h6><canvas id="chartCostComp"></canvas></div></div>
-                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Faturamento por Segmento</h6><canvas id="chartSegmentPie"></canvas></div></div>
+                    <div class="col-lg-6">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="text-muted" style="font-size: 0.95rem;">Volume de Vendas (Qtd)</h6>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoQtyPeriodo" onclick="updateEvolutionQtyChartRange('year')">Período Selecionado</button>
+                                    <button type="button" class="btn btn-outline-secondary active" id="btnEvoQty6" onclick="updateEvolutionQtyChartRange(6)">6 Meses</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoQty12" onclick="updateEvolutionQtyChartRange(12)">12 Meses</button>
+                                </div>
+                            </div>
+                            <canvas id="chartEvolutionQty"></canvas>
+                        </div>
+                    </div>
                 </div>
 
+                <h4 class="section-title">Composição e Investimento</h4>
                 <div class="row mb-4">
-                    <div class="col-12">
+                    <div class="col-lg-6">
                         <div class="chart-container">
                             <div class="d-flex justify-content-between mb-2">
                                 <h6 class="text-muted">Investimento Ads vs ROAS</h6>
@@ -265,6 +277,8 @@
                             <canvas id="chartAds"></canvas>
                         </div>
                     </div>
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Composição do Faturamento</h6><canvas id="chartCostComp"></canvas></div></div>
+                    <div class="col-lg-3"><div class="chart-container"><h6 class="text-center text-muted mb-3" style="font-size: 0.95rem;">Faturamento por Segmento</h6><canvas id="chartSegmentPie"></canvas></div></div>
                 </div>
 
                 <div class="row mb-4">
@@ -298,7 +312,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.1.4
+                Dashboard Shiva Care &bull; v1.2.1
             </div>
         </div>
     </div>
@@ -393,15 +407,12 @@
 
                 initFilters();
                 
-                // MUDANÇA v1.1.1: Exibir as divs ANTES de processar os gráficos, 
-                // para que o ECharts saiba a largura exata da tela para o Mapa.
                 document.getElementById('btnShowUpload').classList.remove('d-none');
                 document.getElementById('btnToggleFilters').classList.remove('d-none');
                 document.getElementById('titleBar').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('d-none');
                 document.getElementById('main-dashboard').classList.remove('hidden');
 
-                // Agora que o container está visível, podemos renderizar
                 applyFilters(); 
 
                 document.getElementById('loading').style.display = 'none';
@@ -429,12 +440,10 @@
              document.getElementById('btnShowUpload').classList.add('d-none');
         });
 
-        // Toggle do Filtro + Efeito Rolagem (v1.1.2)
         document.getElementById('btnToggleFilters').addEventListener('click', () => {
             const filterContainer = document.getElementById('filterContainer');
             filterContainer.classList.toggle('d-none');
             
-            // Se o filtro acabou de aparecer, rola a página para o topo
             if (!filterContainer.classList.contains('d-none')) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -469,7 +478,6 @@
                 const alertBox = document.querySelector('.alert-warning');
                 if(alertBox) alertBox.remove();
 
-                // MUDANÇA v1.1.1: Exibir as divs ANTES de processar os gráficos.
                 document.getElementById('uploadContainer').classList.add('d-none');
                 document.getElementById('btnShowUpload').classList.remove('d-none');
                 document.getElementById('btnToggleFilters').classList.remove('d-none');
@@ -503,7 +511,8 @@
                     ...row, dateObj: date, year: date ? date.getFullYear() : 0, month: date ? date.getMonth() + 1 : 0,
                     valBruto: Utils.parseCurrency(row['VALOR BRUTO']), valLucro: Utils.parseCurrency(row['Resultado Operacional'] || row['Lucro']),
                     valTaxas: Utils.parseCurrency(row['TAXAS']), valFrete: Utils.parseCurrency(row['FRETE']), valCusto: Utils.parseCurrency(row['Custo Variavel Total']),
-                    valImposto: Utils.parseCurrency(row['Imposto_NF']), qtd: parseInt(row['QTDE']) || 0, normChannel: Utils.normalizeChannel(row['Canais']), MODELO: row['MODELO']
+                    valImposto: Utils.parseCurrency(row['Imposto_NF']), qtd: parseInt(row['QTDE']) || 0, normChannel: Utils.normalizeChannel(row['Canais']), MODELO: row['MODELO'],
+                    SEGMENTO: row['SEGMENTO']
                 };
             }).filter(d => d.dateObj);
 
@@ -537,7 +546,6 @@
                 `); 
             });
 
-            // --- INTELIGÊNCIA: DEFINE O FILTRO INICIAL BASEADO NA DATA MAIS RECENTE ---
             let maxDate = new Date(0);
             AppState.rawSales.forEach(d => {
                 if (d.dateObj && d.dateObj > maxDate) maxDate = d.dateObj;
@@ -671,7 +679,17 @@
             if (name.includes('mercado livre') || name.includes('mercado ads')) return '#fdd835'; if (name.includes('loja integrada') || name.includes('google') || name.includes('meta')) return '#1e88e5'; if (name.includes('distribuidor')) return '#43a047'; if (name.includes('amazon')) return '#fb8c00'; return '#78909c';
         }
 
-        function renderCharts() { destroyCharts(); renderEvolutionChart(6); renderSegmentPie(); renderCostComposition(); renderAdsChart(6); renderChannelCharts(); renderTopProducts(); }
+        function renderCharts() { 
+            destroyCharts(); 
+            renderEvolutionChart(6); 
+            renderEvolutionQtyChart(6);
+            renderSegmentPie(); 
+            renderCostComposition(); 
+            renderAdsChart(6); 
+            renderChannelCharts(); 
+            renderTopProducts(); 
+        }
+        
         function destroyCharts() { Object.values(AppState.charts).forEach(c => c.destroy()); AppState.charts = {}; }
 
         function renderCostComposition() {
@@ -744,8 +762,127 @@
                 options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } }
             });
         }
-        
         window.updateEvolutionChartRange = (val) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderEvolutionChart(val === 'year' ? null : val); };
+
+        // --- MUDANÇA v1.2.1: EVOLUÇÃO DE VOLUME COM LINHA E DATALABELS ---
+        function renderEvolutionQtyChart(monthsBack = null) {
+            const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
+            document.querySelectorAll('#btnEvoQtyPeriodo, #btnEvoQty6, #btnEvoQty12').forEach(b => b.classList.remove('active'));
+            if (!isCustomDate) { if(monthsBack === 6) document.getElementById('btnEvoQty6').classList.add('active'); else if(monthsBack === 12) document.getElementById('btnEvoQty12').classList.add('active'); else document.getElementById('btnEvoQtyPeriodo').classList.add('active'); }
+
+            let labels = [], qtyData = [], higData = [], barColors = [], expectedKeys = [];
+
+            if (isCustomDate) {
+                const agg = {}; 
+                AppState.filteredSales.forEach(d => { 
+                    const key = `${d.year}-${String(d.month).padStart(2,'0')}`; 
+                    if(!agg[key]) agg[key] = { total: 0, hig: 0 }; 
+                    agg[key].total += d.qtd; 
+                    if (d['SEGMENTO'] === 'Beleza') agg[key].hig += d.qtd;
+                });
+                expectedKeys = Object.keys(agg).sort(); 
+                labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`);
+                qtyData = expectedKeys.map(k => agg[k].total); 
+                higData = expectedKeys.map(k => agg[k].hig);
+                barColors = expectedKeys.map(() => '#3498db'); 
+            } else if (monthsBack === null) {
+                labels = Utils.monthNames.map(m => m.substring(0,3)); const months = Array.from({length: 12}, (_, i) => i + 1);
+                qtyData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.qtd, 0));
+                higData = months.map(m => AppState.filteredSales.filter(d => d.month === m && d['SEGMENTO'] === 'Beleza').reduce((a,c) => a+c.qtd, 0));
+                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#3498db' : '#bdc3c7');
+            } else {
+                let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
+                const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
+                let curr = new Date(startDate); for(let i=0; i<monthsBack; i++) { expectedKeys.push(`${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}`); curr.setMonth(curr.getMonth() + 1); }
+                const agg = {}; 
+                AppState.rawSales.forEach(d => { 
+                    if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return; 
+                    if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return; 
+                    const key = `${d.year}-${String(d.month).padStart(2,'0')}`; 
+                    if(expectedKeys.includes(key)) { 
+                        if(!agg[key]) agg[key] = { total: 0, hig: 0 }; 
+                        agg[key].total += d.qtd; 
+                        if (d['SEGMENTO'] === 'Beleza') agg[key].hig += d.qtd;
+                    } 
+                });
+                labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`); 
+                qtyData = expectedKeys.map(k => agg[k] ? agg[k].total : 0);
+                higData = expectedKeys.map(k => agg[k] ? agg[k].hig : 0);
+                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#3498db' : '#bdc3c7'; });
+            }
+
+            const datasets = [ 
+                { 
+                    label: `Volume Total`, 
+                    data: qtyData, 
+                    backgroundColor: barColors, 
+                    yAxisID: 'y', 
+                    order: 3, 
+                    datalabels: { 
+                        display: true, 
+                        align: 'end', 
+                        anchor: 'end', 
+                        color: '#444', 
+                        font: { weight: 'bold', size: 10 },
+                        formatter: (v) => v > 0 ? v.toLocaleString('pt-BR') : ''
+                    } 
+                },
+                {
+                    label: `Higienizadores (Beleza)`,
+                    data: higData,
+                    borderColor: '#9b59b6',
+                    backgroundColor: '#fff',
+                    borderWidth: 2,
+                    type: 'line',
+                    yAxisID: 'y',
+                    order: 1,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#9b59b6',
+                    pointRadius: 4,
+                    datalabels: {
+                        display: true,
+                        align: 'top',
+                        anchor: 'bottom',
+                        color: '#9b59b6',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: (v) => v > 0 ? v.toLocaleString('pt-BR') : '',
+                        offset: 4
+                    }
+                }
+            ];
+
+            AppState.filters.compareYears.forEach((compYear, index) => {
+                let compData = []; const colorLine = ['rgba(231, 76, 60, 0.8)', 'rgba(52, 152, 219, 0.8)', 'rgba(241, 196, 15, 0.8)'][index % 3];
+                if (isCustomDate) {
+                    let prevStart = AppState.filters.startDate ? new Date(AppState.filters.startDate) : null; let prevEnd = AppState.filters.endDate ? new Date(AppState.filters.endDate) : null;
+                    if(prevStart) prevStart.setFullYear(compYear); if(prevEnd) prevEnd.setFullYear(compYear);
+                    const compAgg = {}; AppState.rawSales.filter(d => { if (prevStart && d.dateObj < prevStart) return false; if (prevEnd && d.dateObj > prevEnd) return false; if (d.year !== compYear) return false; if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return false; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return false; return true; }).forEach(d => { const mKey = String(d.month).padStart(2,'0'); if(!compAgg[mKey]) compAgg[mKey] = 0; compAgg[mKey] += d.qtd; });
+                    compData = expectedKeys.map(k => compAgg[k.split('-')[1]] || 0);
+                } else if (monthsBack === null) {
+                    compData = Array.from({length: 12}, (_, i) => i + 1).map(m => AppState.rawSales.filter(d => d.year === compYear && d.month === m && (AppState.filters.segment === 'all' || d['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || d.normChannel === AppState.filters.channel)).reduce((a,c) => a+c.qtd,0));
+                } else {
+                    compData = expectedKeys.map(k => AppState.rawSales.filter(d => d.year === compYear && d.month === parseInt(k.split('-')[1]) && (AppState.filters.segment === 'all' || d['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || d.normChannel === AppState.filters.channel)).reduce((a,c) => a+c.qtd,0));
+                }
+                datasets.push({ label: `Volume (${compYear})`, data: compData, backgroundColor: colorLine, borderWidth: 0, type: 'bar', yAxisID: 'y', order: 2, datalabels: { display: false } });
+            });
+
+            if (AppState.charts.evolutionQty) AppState.charts.evolutionQty.destroy();
+
+            AppState.charts.evolutionQty = new Chart(document.getElementById('chartEvolutionQty').getContext('2d'), {
+                type: 'bar', data: { labels: labels, datasets: datasets },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    interaction: { mode: 'index', intersect: false }, 
+                    layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, // Padding top aumentado para os números não cortarem
+                    plugins: { 
+                        tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')} un.` } }, 
+                        legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } 
+                    } 
+                }
+            });
+        }
+        window.updateEvolutionQtyChartRange = (val) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderEvolutionQtyChart(val === 'year' ? null : val); };
 
         function renderSegmentPie() {
             const segments = { 'Beleza': 0, 'Biossegurança': 0 }; AppState.filteredSales.forEach(d => { if(segments[d['SEGMENTO']] !== undefined) segments[d['SEGMENTO']] += d.valBruto; });
