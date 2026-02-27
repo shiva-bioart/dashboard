@@ -312,7 +312,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.2.1
+                Dashboard Shiva Care &bull; v1.2.3
             </div>
         </div>
     </div>
@@ -385,6 +385,16 @@
             mapAdsChannelToSalesChannel: (adsChannel) => {
                 if (adsChannel === "Mercado Ads") return "Mercado Livre"; if (adsChannel === "Amazon Ads") return "Amazon";
                 if (adsChannel === "Google Ads" || adsChannel === "Meta Ads") return "Loja Integrada"; return "Outros";
+            },
+            // INTELIGÊNCIA v1.2.3: Verifica luminosidade da cor Hex e retorna o texto contrastante ideal
+            getContrastText: (hexColor) => {
+                if (!hexColor) return '#334155';
+                const hex = hexColor.replace('#', '');
+                const r = parseInt(hex.substr(0, 2), 16);
+                const g = parseInt(hex.substr(2, 2), 16);
+                const b = parseInt(hex.substr(4, 2), 16);
+                const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+                return (yiq >= 128) ? '#334155' : '#ffffff';
             }
         };
 
@@ -706,7 +716,14 @@
                     responsive: true, maintainAspectRatio: false, layout: { padding: 30 },
                     plugins: {
                         legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
-                        datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value*100 / sum).toFixed(1)}%)`; } },
+                        datalabels: { 
+                            display: true, 
+                            color: (ctx) => Utils.getContrastText(ctx.dataset.backgroundColor[ctx.dataIndex]), 
+                            textStrokeWidth: 0, 
+                            textAlign: 'center', 
+                            font: { weight: 'bold', size: 10 }, 
+                            formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value*100 / sum).toFixed(1)}%)`; } 
+                        },
                         tooltip: { callbacks: { label: (c) => c.label + ': ' + Utils.formatCurrency(c.parsed) } }
                     }
                 }
@@ -764,7 +781,6 @@
         }
         window.updateEvolutionChartRange = (val) => { if(!AppState.filters.startDate && !AppState.filters.endDate) renderEvolutionChart(val === 'year' ? null : val); };
 
-        // --- MUDANÇA v1.2.1: EVOLUÇÃO DE VOLUME COM LINHA E DATALABELS ---
         function renderEvolutionQtyChart(monthsBack = null) {
             const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
             document.querySelectorAll('#btnEvoQtyPeriodo, #btnEvoQty6, #btnEvoQty12').forEach(b => b.classList.remove('active'));
@@ -874,7 +890,7 @@
                     responsive: true, 
                     maintainAspectRatio: false, 
                     interaction: { mode: 'index', intersect: false }, 
-                    layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, // Padding top aumentado para os números não cortarem
+                    layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, 
                     plugins: { 
                         tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')} un.` } }, 
                         legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } 
@@ -888,7 +904,7 @@
             const segments = { 'Beleza': 0, 'Biossegurança': 0 }; AppState.filteredSales.forEach(d => { if(segments[d['SEGMENTO']] !== undefined) segments[d['SEGMENTO']] += d.valBruto; });
             AppState.charts.segmentPie = new Chart(document.getElementById('chartSegmentPie').getContext('2d'), {
                 type: 'doughnut', data: { labels: Object.keys(segments), datasets: [{ data: Object.values(segments), backgroundColor: ['#ce93d8', '#a5d6a7'], borderWidth: 1 }] },
-                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 30 }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 30 }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }, datalabels: { display: true, color: (ctx) => Utils.getContrastText(ctx.dataset.backgroundColor[ctx.dataIndex]), textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if (value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
             });
         }
 
@@ -941,12 +957,12 @@
 
             AppState.charts.chanPie = new Chart(document.getElementById('chartChannelPie').getContext('2d'), {
                 type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(l => agg[l].rev), backgroundColor: labels.map(l => getChannelColor(l)) }] },
-                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: (ctx) => Utils.getContrastText(ctx.dataset.backgroundColor[ctx.dataIndex]), textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${Utils.formatCompact(value)}\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${Utils.formatCurrency(c.parsed)} (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
             });
 
             AppState.charts.chanQty = new Chart(document.getElementById('chartChannelQty').getContext('2d'), {
                 type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(l => agg[l].qtd), backgroundColor: labels.map(l => getChannelColor(l)) }] },
-                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value.toLocaleString('pt-BR')} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { display: false }, datalabels: { display: true, color: (ctx) => Utils.getContrastText(ctx.dataset.backgroundColor[ctx.dataIndex]), textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value.toLocaleString('pt-BR')} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
             });
         }
 
@@ -956,7 +972,7 @@
                 const sorted = Object.entries(agg).sort((a,b) => b[1] - a[1]).slice(0, 6);
                 AppState.charts[ctxId] = new Chart(document.getElementById(ctxId).getContext('2d'), {
                     type: 'doughnut', data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: colorArray }] },
-                    options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { position: 'right' }, datalabels: { display: true, color: '#334155', textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 11 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
+                    options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, plugins: { legend: { position: 'right' }, datalabels: { display: true, color: (ctx) => Utils.getContrastText(ctx.dataset.backgroundColor[ctx.dataIndex]), textStrokeWidth: 0, textAlign: 'center', font: { weight: 'bold', size: 10 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); if(value === 0) return null; return `${value} un.\n(${(value * 100 / sum).toFixed(1)}%)`; } }, tooltip: { callbacks: { label: (c) => { let sum = c.dataset.data.reduce((a, b) => a + b, 0); return ` ${c.label}: ${c.parsed.toLocaleString('pt-BR')} un. (${sum === 0 ? "0%" : (c.parsed * 100 / sum).toFixed(1) + "%"})`; } } } } }
                 });
             };
             processTop('Beleza', 'chartTopBeleza', ['#7b1fa2', '#8e24aa', '#9c27b0', '#ab47bc', '#ba68c8', '#ce93d8']);
