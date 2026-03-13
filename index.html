@@ -312,7 +312,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.2.3
+                Dashboard Shiva Care &bull; v1.2.4
             </div>
         </div>
     </div>
@@ -386,7 +386,6 @@
                 if (adsChannel === "Mercado Ads") return "Mercado Livre"; if (adsChannel === "Amazon Ads") return "Amazon";
                 if (adsChannel === "Google Ads" || adsChannel === "Meta Ads") return "Loja Integrada"; return "Outros";
             },
-            // INTELIGÊNCIA v1.2.3: Verifica luminosidade da cor Hex e retorna o texto contrastante ideal
             getContrastText: (hexColor) => {
                 if (!hexColor) return '#334155';
                 const hex = hexColor.replace('#', '');
@@ -527,9 +526,13 @@
             }).filter(d => d.dateObj);
 
             AppState.rawAds = adsData.map(row => {
-                const salesAds = parseFloat(row['Qntd_Vendas_Ads']) || 0; const salesOrg = parseFloat(row['Qntd_Vendas_Organica']) || 0;
+                const salesAds = parseFloat(row['Quantidade_vendas_Ads']) || parseFloat(row['Qntd_Vendas_Ads']) || 0; 
+                const salesOrg = parseFloat(row['Quantidade_Vendas_Organica']) || parseFloat(row['Qntd_Vendas_Organica']) || 0;
                 return {
-                    ...row, monthNum: Utils.monthMap[row['Mes']] || 0, year: parseInt(row['Ano']) || 0, valInvest: Utils.parseCurrency(row['Investimento']),
+                    ...row, monthNum: Utils.monthMap[row['Mes']] || parseInt(row['Mes']) || 0, year: parseInt(row['Ano']) || 0, 
+                    valInvest: Utils.parseCurrency(row['Investimento']),
+                    valReceita: Utils.parseCurrency(row['Receita']),
+                    roasCanal: Utils.parseCurrency(row['ROAS_Canal']) || 0,
                     salesAds, salesOrg, totalSalesUnit: salesAds + salesOrg, salesChannelNorm: Utils.mapAdsChannelToSalesChannel(row['Canal_Ads'])
                 };
             });
@@ -630,12 +633,13 @@
             const totalAdsInv = currentAds.reduce((acc, curr) => acc + curr.valInvest, 0);
             const totalHigienizadores = currentSales.filter(d => d['SEGMENTO'] === 'Beleza').reduce((acc, curr) => acc + curr.qtd, 0);
 
-            let adsRevenue = 0, organicRevenue = 0; const adsRatioMap = {};
-            AppState.rawAds.forEach(ad => { adsRatioMap[`${ad.year}-${ad.monthNum}-${ad.salesChannelNorm}`] = ad.totalSalesUnit > 0 ? (ad.salesAds / ad.totalSalesUnit) : 0; });
-            currentSales.forEach(sale => {
-                const ratio = adsRatioMap[`${sale.year}-${sale.month}-${sale.normChannel}`] || 0;
-                adsRevenue += sale.valBruto * ratio; organicRevenue += sale.valBruto * (1 - ratio);
+            let adsRevenue = 0;
+            currentAds.forEach(ad => {
+                adsRevenue += ad.valReceita;
             });
+            
+            let organicRevenue = totalRev - adsRevenue;
+            if(organicRevenue < 0) organicRevenue = 0; 
 
             document.getElementById('kpi-revenue').innerText = Utils.formatCurrency(totalRev);
             document.getElementById('kpi-profit').innerText = Utils.formatCurrency(totalProfit);
@@ -908,6 +912,9 @@
             });
         }
 
+        // ==========================================
+        // ATUALIZAÇÃO NO CÁLCULO E GRÁFICO DE ADS
+        // ==========================================
         function renderAdsChart(monthsBack) {
             const isCustomDate = AppState.filters.startDate || AppState.filters.endDate;
             document.querySelectorAll('#btnAds6, #btnAds12').forEach(b => b.classList.remove('active'));
@@ -928,14 +935,59 @@
             const datasets = []; const allChannels = [...new Set(AppState.rawAds.map(d => d['Canal_Ads']))];
             allChannels.forEach(ch => { const data = labels.map(l => adsAgg[l] && adsAgg[l].channels[ch] ? adsAgg[l].channels[ch] : 0); if (data.some(v => v > 0)) { datasets.push({ type: 'bar', label: ch, data: data, stack: 'Stack 0', backgroundColor: getAdColor(ch), maxBarThickness: 50, order: 2, datalabels: { display: false } }); } });
 
+            // AQUI: O cálculo exato que resolve o seu problema de duplicidade
             const roasData = labels.map(l => {
-                if (!adsAgg[l]) return 0; const [y, m] = l.split('-'); const inv = adsAgg[l].inv; if(inv === 0) return 0;
-                const salesInMonth = AppState.rawSales.filter(s => s.year == parseInt(y) && s.month == parseInt(m) && (AppState.filters.segment === 'all' || s['SEGMENTO'] === AppState.filters.segment) && (AppState.filters.channel === 'all' || s.normChannel === AppState.filters.channel));
-                let attrRev = 0; salesInMonth.forEach(s => { const adEntry = AppState.rawAds.find(a => a.year == parseInt(y) && a.monthNum == parseInt(m) && a.salesChannelNorm === s.normChannel); if(adEntry && adEntry.totalSalesUnit > 0) attrRev += s.valBruto * (adEntry.salesAds / adEntry.totalSalesUnit); });
-                return (attrRev / inv);
+                const [y, m] = l.split('-');
+                
+                // Pega os ads daquele mês específico, MAS que também respeitem o filtro de canal ativo
+                const adsNoMes = AppState.rawAds.filter(a => {
+                    const isMesmoMes = (a.year == y && a.monthNum == parseInt(m));
+                    const isCanalSelecionado = (AppState.filters.channel === 'all' || a.salesChannelNorm === AppState.filters.channel);
+                    return isMesmoMes && isCanalSelecionado;
+                });
+                
+                let totalInvestimento = 0;
+                let totalReceita = 0;
+                
+                // Faz a soma ponderada real: Total da Receita no mês dividida pelo Total de Investimento no mês
+                adsNoMes.forEach(ad => {
+                    totalInvestimento += ad.valInvest;
+                    totalReceita += ad.valReceita; 
+                });
+                
+                if (totalInvestimento === 0) return 0;
+                return (totalReceita / totalInvestimento);
             });
 
-            datasets.push({ type: 'line', label: 'ROAS Global', data: roasData, borderColor: '#5E3990', backgroundColor: '#fff', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#5E3990', pointRadius: 5, tension: 0.3, yAxisID: 'y1', order: 1, datalabels: { display: true, align: 'top', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#5E3990', borderWidth: 1, borderRadius: 4, color: '#5E3990', font: { weight: 'bold', size: 10 }, formatter: (v) => v.toFixed(1) + 'x', padding: 4 } });
+            // Legenda inteligente (Muda de 'Global' para o nome do canal caso filtrado)
+            const roasLabelText = AppState.filters.channel === 'all' ? 'ROAS Global' : `ROAS ${AppState.filters.channel}`;
+
+            datasets.push({ 
+                type: 'line', 
+                label: roasLabelText, 
+                data: roasData, 
+                borderColor: '#5E3990', 
+                backgroundColor: '#fff', 
+                borderWidth: 3, 
+                pointBackgroundColor: '#fff', 
+                pointBorderColor: '#5E3990', 
+                pointRadius: 5, 
+                tension: 0.3, 
+                yAxisID: 'y1', 
+                order: 1, 
+                datalabels: { 
+                    display: true, 
+                    align: 'top', 
+                    backgroundColor: 'rgba(255,255,255,0.9)', 
+                    borderColor: '#5E3990', 
+                    borderWidth: 1, 
+                    borderRadius: 4, 
+                    color: '#5E3990', 
+                    font: { weight: 'bold', size: 10 }, 
+                    formatter: (v) => v.toFixed(1) + 'x', 
+                    padding: 4 
+                } 
+            });
 
             if (AppState.charts.ads) AppState.charts.ads.destroy();
             AppState.charts.ads = new Chart(document.getElementById('chartAds').getContext('2d'), {
