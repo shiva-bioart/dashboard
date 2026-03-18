@@ -234,7 +234,7 @@
                 
                 <div class="row g-3 mb-3">
                     <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card scroll-reveal" style="border-left-color: #3498db;"><div class="kpi-title">Receita Total</div><div class="kpi-value kpi-animate" id="kpi-revenue" data-type="currency">R$ 0,00</div><div class="kpi-subtext" id="kpi-revenue-comp">--</div></div></div>
-                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card scroll-reveal" style="border-left-color: #27ae60;"><div class="kpi-title">Resultado Operacional</div><div class="kpi-value kpi-animate" id="kpi-profit" data-type="currency">R$ 0,00</div><div class="kpi-subtext" id="kpi-profit-comp">--</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card scroll-reveal" style="border-left-color: #27ae60;"><div class="kpi-title">Margem de Contribuição</div><div class="kpi-value kpi-animate" id="kpi-profit" data-type="currency">R$ 0,00</div><div class="kpi-subtext" id="kpi-profit-comp">--</div></div></div>
                     <div class="col-lg-4 col-md-4 col-sm-12"><div class="kpi-card scroll-reveal" style="border-left-color: #9b59b6;"><div class="kpi-title">Itens Vendidos</div><div class="kpi-value kpi-animate" id="kpi-qty" data-type="number">0</div><div class="kpi-subtext" id="kpi-qty-comp">--</div></div></div>
                 </div>
 
@@ -249,7 +249,7 @@
                     <div class="col-lg-6">
                         <div class="chart-container scroll-reveal" data-chart-renderer="renderEvolutionChart">
                             <div class="d-flex justify-content-between mb-2">
-                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Resultado Operacional</h6>
+                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Margem de Contribuição</h6>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary" id="btnEvoPeriodo" onclick="updateEvolutionChartRange('year')">Período Selecionado</button>
                                     <button type="button" class="btn btn-outline-secondary active" id="btnEvo6" onclick="updateEvolutionChartRange(6)">6 Meses</button>
@@ -374,7 +374,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.3.2
+                Dashboard Shiva Care &bull; v1.3.5
             </div>
         </div>
     </div>
@@ -397,7 +397,7 @@
         Chart.defaults.plugins.tooltip.displayColors = true;
         Chart.defaults.plugins.tooltip.usePointStyle = true;
         
-        // DESATIVA A ANIMAÇÃO GLOBAL DO CHART.JS PARA GARANTIR BARRAS ESTÁTICAS RÁPIDAS
+        // DESATIVA A ANIMAÇÃO GLOBAL DO CHART.JS PARA GARANTIR BARRAS ESTÁTICAS RÁPIDAS E SEM ERROS
         Chart.defaults.animation = false;
 
         const AppState = {
@@ -627,7 +627,8 @@
                 const date = Utils.parseDate(row['DATA']);
                 return {
                     ...row, dateObj: date, year: date ? date.getFullYear() : 0, month: date ? date.getMonth() + 1 : 0,
-                    valBruto: Utils.parseCurrency(row['VALOR BRUTO']), valLucro: Utils.parseCurrency(row['Resultado Operacional'] || row['Lucro']),
+                    valBruto: Utils.parseCurrency(row['VALOR BRUTO']), 
+                    valLucro: Utils.parseCurrency(row['Margem de Contribuição'] || row['Resultado Operacional'] || row['Lucro']),
                     valTaxas: Utils.parseCurrency(row['TAXAS']), valFrete: Utils.parseCurrency(row['FRETE']), valCusto: Utils.parseCurrency(row['Custo Variavel Total']),
                     valImposto: Utils.parseCurrency(row['Imposto_NF']), qtd: parseInt(row['QTDE']) || 0, normChannel: Utils.normalizeChannel(row['Canais']), MODELO: row['MODELO'],
                     SEGMENTO: row['SEGMENTO']
@@ -717,7 +718,15 @@
                 return match;
             });
 
-            updateKPIs(); renderCharts();
+            updateKPIs(); 
+            
+            // Força reset para animações de rolagem
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                el.classList.remove('visible');
+                el.dataset.needsRender = "true";
+                el.dataset.needsAnim = "true";
+                scrollObserver.observe(el);
+            });
         }
 
         function updateKPIs() {
@@ -796,6 +805,7 @@
             AppState.charts = {}; 
         }
 
+        // Esta função APENAS prepara os elementos para serem ativados pelo scrollObserver
         function renderCharts() { 
             destroyCharts(); 
             document.querySelectorAll('.scroll-reveal').forEach(el => {
@@ -821,7 +831,7 @@
                 { value: Math.max(0, totalImposto), name: 'Impostos', itemStyle: { color: '#e67e22' } },
                 { value: Math.max(0, totalTaxas), name: 'Taxas', itemStyle: { color: '#f1c40f' } },
                 { value: Math.max(0, totalFrete), name: 'Fretes', itemStyle: { color: '#3498db' } },
-                { value: Math.max(0, totalMargin), name: 'Res. Op.', itemStyle: { color: '#27ae60' } }
+                { value: Math.max(0, totalMargin), name: 'Margem de Contribuição', itemStyle: { color: '#27ae60' } }
             ].filter(d => d.value > 0);
 
             let echart = echarts.init(document.getElementById(ctxId));
@@ -869,17 +879,17 @@
                 labels = Utils.monthNames.map(m => m.substring(0,3)); const months = Array.from({length: 12}, (_, i) => i + 1);
                 revData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valBruto,0));
                 profData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valLucro,0));
-                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#571756' : '#d4d4d4');
+                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#942892' : '#A6A6A6');
             } else {
                 let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
                 const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
                 let curr = new Date(startDate); for(let i=0; i<monthsBack; i++) { expectedKeys.push(`${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}`); curr.setMonth(curr.getMonth() + 1); }
                 const agg = {}; AppState.rawSales.forEach(d => { if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return; const key = `${d.year}-${String(d.month).padStart(2,'0')}`; if(expectedKeys.includes(key)) { if(!agg[key]) agg[key] = { rev: 0, luc: 0 }; agg[key].rev += d.valBruto; agg[key].luc += d.valLucro; } });
                 labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`); revData = expectedKeys.map(k => agg[k] ? agg[k].rev : 0); profData = expectedKeys.map(k => agg[k] ? agg[k].luc : 0);
-                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#511756' : '#d4d4d4'; });
+                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#942892' : '#A6A6A6'; });
             }
 
-            const datasets = [ { label: `Receita`, data: revData, backgroundColor: barColors, yAxisID: 'y', order: 3, datalabels: { display: false } }, { label: `Resultado Operacional`, data: profData, borderColor: '#1fd187', type: 'line', yAxisID: 'y', order: 1, datalabels: { display: false } } ];
+            const datasets = [ { label: `Receita`, data: revData, backgroundColor: barColors, yAxisID: 'y', order: 3, datalabels: { display: false } }, { label: `Margem de Contribuição`, data: profData, borderColor: '#1B4332', type: 'line', yAxisID: 'y', order: 1, datalabels: { display: false } } ];
 
             AppState.filters.compareYears.forEach((compYear, index) => {
                 let compData = []; const colorLine = ['rgba(231, 76, 60, 0.8)', 'rgba(52, 152, 219, 0.8)', 'rgba(241, 196, 15, 0.8)'][index % 3];
@@ -899,9 +909,7 @@
             if (AppState.charts.evolution) AppState.charts.evolution.destroy();
             AppState.charts.evolution = new Chart(document.getElementById('chartEvolution').getContext('2d'), {
                 type: 'bar', data: { labels: labels, datasets: datasets },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } 
-                }
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } }
             });
         };
         window.updateEvolutionChartRange = (val) => { AppState.chartRanges.evo = val === 'year' ? null : val; if(!AppState.filters.startDate && !AppState.filters.endDate) window.renderEvolutionChart(AppState.chartRanges.evo); };
@@ -951,9 +959,7 @@
             if (AppState.charts.evolutionQty) AppState.charts.evolutionQty.destroy();
             AppState.charts.evolutionQty = new Chart(document.getElementById('chartEvolutionQty').getContext('2d'), {
                 type: 'bar', data: { labels: labels, datasets: datasets },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')} un.` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } 
-                }
+                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')} un.` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } }
             });
         };
         window.updateEvolutionQtyChartRange = (val) => { AppState.chartRanges.evoQty = val === 'year' ? null : val; if(!AppState.filters.startDate && !AppState.filters.endDate) window.renderEvolutionQtyChart(AppState.chartRanges.evoQty); };
@@ -992,25 +998,10 @@
             if (AppState.charts.ads) AppState.charts.ads.destroy();
             AppState.charts.ads = new Chart(document.getElementById('chartAds').getContext('2d'), {
                 data: { labels: labels.map(l => `${l.split('-')[1]}/${l.split('-')[0].substring(2)}`), datasets: datasets },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, 
-                    plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y1' ? ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}x` : ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } }, 
-                    scales: { y: { stacked: true, title: {display:true, text:'Investimento'}, ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } }, y1: { position: 'right', title: {display:true, text:'ROAS'}, grid: {drawOnChartArea: false}, min: 0, max: 40, ticks: { callback: (v) => v + 'x' } } } 
-                }
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y1' ? ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}x` : ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } }, scales: { y: { stacked: true, title: {display:true, text:'Investimento'}, ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } }, y1: { position: 'right', title: {display:true, text:'ROAS'}, grid: {drawOnChartArea: false}, min: 0, ticks: { callback: (v) => v + 'x' } } } }
             });
         };
         window.updateAdsChartRange = (m) => { AppState.chartRanges.ads = m; if(!AppState.filters.startDate && !AppState.filters.endDate) window.renderAdsChart(AppState.chartRanges.ads); };
-
-        window.renderChannelCharts = () => {
-            const agg = {}; AppState.filteredSales.forEach(d => { if (!agg[d.normChannel]) agg[d.normChannel] = { rev: 0, luc: 0, qtd: 0 }; agg[d.normChannel].rev += d.valBruto; agg[d.normChannel].luc += d.valLucro; agg[d.normChannel].qtd += d.qtd; });
-            const labels = Object.keys(agg).sort((a,b) => agg[b].rev - agg[a].rev);
-            
-            if (AppState.charts.chanFin) AppState.charts.chanFin.destroy();
-            AppState.charts.chanFin = new Chart(document.getElementById('chartChannelFin').getContext('2d'), {
-                type: 'bar', data: { labels: labels, datasets: [ { label: 'Resultado Operacional', data: labels.map(l => agg[l].luc), backgroundColor: '#27ae60', stack: 'Stack 0', datalabels: { display: false } }, { label: 'Custos e Taxas', data: labels.map(l => agg[l].rev - agg[l].luc), backgroundColor: '#bdc3c7', stack: 'Stack 0', datalabels: { display: false } } ] },
-                options: { responsive: true, maintainAspectRatio: false, layout: { padding: 20 }, scales: { x: { stacked: true }, y: { stacked: true } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } } }
-            });
-        };
 
         window.renderChannelPie = () => {
             const agg = {}; AppState.filteredSales.forEach(d => { if (!agg[d.normChannel]) agg[d.normChannel] = { rev: 0, luc: 0, qtd: 0 }; agg[d.normChannel].rev += d.valBruto; agg[d.normChannel].luc += d.valLucro; agg[d.normChannel].qtd += d.qtd; });
