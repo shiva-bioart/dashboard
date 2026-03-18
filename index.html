@@ -249,7 +249,7 @@
                     <div class="col-lg-6">
                         <div class="chart-container scroll-reveal" data-chart-renderer="renderEvolutionChart">
                             <div class="d-flex justify-content-between mb-2">
-                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Resultado Op.</h6>
+                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Resultado Operacional</h6>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary" id="btnEvoPeriodo" onclick="updateEvolutionChartRange('year')">Período Selecionado</button>
                                     <button type="button" class="btn btn-outline-secondary active" id="btnEvo6" onclick="updateEvolutionChartRange(6)">6 Meses</button>
@@ -864,22 +864,22 @@
             if (isCustomDate) {
                 const agg = {}; AppState.filteredSales.forEach(d => { const key = `${d.year}-${String(d.month).padStart(2,'0')}`; if(!agg[key]) agg[key] = { rev: 0, luc: 0 }; agg[key].rev += d.valBruto; agg[key].luc += d.valLucro; });
                 expectedKeys = Object.keys(agg).sort(); labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`);
-                revData = expectedKeys.map(k => agg[k].rev); profData = expectedKeys.map(k => agg[k].luc); barColors = expectedKeys.map(() => '#C5A059'); 
+                revData = expectedKeys.map(k => agg[k].rev); profData = expectedKeys.map(k => agg[k].luc); barColors = expectedKeys.map(() => '#942892'); 
             } else if (monthsBack === null) {
                 labels = Utils.monthNames.map(m => m.substring(0,3)); const months = Array.from({length: 12}, (_, i) => i + 1);
                 revData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valBruto,0));
                 profData = months.map(m => AppState.filteredSales.filter(d => d.month === m).reduce((a,c) => a+c.valLucro,0));
-                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#C5A059' : '#A6A6A6');
+                barColors = months.map(m => (AppState.filters.month !== 'all' && m === parseInt(AppState.filters.month)) ? '#571756' : '#d4d4d4');
             } else {
                 let refYear = AppState.filters.year; let refMonth = AppState.filters.month !== 'all' ? parseInt(AppState.filters.month) : 12;
                 const startDate = new Date(refYear, refMonth - 1, 1); startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
                 let curr = new Date(startDate); for(let i=0; i<monthsBack; i++) { expectedKeys.push(`${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}`); curr.setMonth(curr.getMonth() + 1); }
                 const agg = {}; AppState.rawSales.forEach(d => { if (AppState.filters.segment !== 'all' && d['SEGMENTO'] !== AppState.filters.segment) return; if (AppState.filters.channel !== 'all' && d.normChannel !== AppState.filters.channel) return; const key = `${d.year}-${String(d.month).padStart(2,'0')}`; if(expectedKeys.includes(key)) { if(!agg[key]) agg[key] = { rev: 0, luc: 0 }; agg[key].rev += d.valBruto; agg[key].luc += d.valLucro; } });
                 labels = expectedKeys.map(k => `${k.split('-')[1]}/${k.split('-')[0].substring(2)}`); revData = expectedKeys.map(k => agg[k] ? agg[k].rev : 0); profData = expectedKeys.map(k => agg[k] ? agg[k].luc : 0);
-                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#C5A059' : '#A6A6A6'; });
+                barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#511756' : '#d4d4d4'; });
             }
 
-            const datasets = [ { label: `Receita`, data: revData, backgroundColor: barColors, yAxisID: 'y', order: 3, datalabels: { display: false } }, { label: `Resultado Operacional`, data: profData, borderColor: '#1B4332', type: 'line', yAxisID: 'y', order: 1, datalabels: { display: false } } ];
+            const datasets = [ { label: `Receita`, data: revData, backgroundColor: barColors, yAxisID: 'y', order: 3, datalabels: { display: false } }, { label: `Resultado Operacional`, data: profData, borderColor: '#1fd187', type: 'line', yAxisID: 'y', order: 1, datalabels: { display: false } } ];
 
             AppState.filters.compareYears.forEach((compYear, index) => {
                 let compData = []; const colorLine = ['rgba(231, 76, 60, 0.8)', 'rgba(52, 152, 219, 0.8)', 'rgba(241, 196, 15, 0.8)'][index % 3];
