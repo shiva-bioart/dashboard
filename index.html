@@ -248,10 +248,16 @@
                 <div class="row mb-4">
                     <div class="col-lg-6">
                         <div class="chart-container scroll-reveal" data-chart-renderer="renderEvolutionChart">
-                            <div class="d-flex justify-content-between mb-2">
-                                <h6 class="text-muted" style="font-size: 0.95rem;">Receita x Margem de Contribuição</h6>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoPeriodo" onclick="updateEvolutionChartRange('year')">Período Selecionado</button>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h6 class="text-muted mb-2" style="font-size: 0.95rem;">Receita x Margem de Contribuição</h6>
+                                    <div class="btn-group shadow-sm" role="group">
+                                        <button type="button" class="btn btn-sm" id="btnToggleGlobal" onclick="toggleMargem('global')"><i class="fas fa-eye-slash"></i> Global</button>
+                                        <button type="button" class="btn btn-sm" id="btnToggleBeleza" onclick="toggleMargem('beleza')"><i class="fas fa-eye"></i> Beleza</button>
+                                    </div>
+                                </div>
+                                <div class="btn-group btn-group-sm shadow-sm" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" id="btnEvoPeriodo" onclick="updateEvolutionChartRange('year')">Período</button>
                                     <button type="button" class="btn btn-outline-secondary active" id="btnEvo6" onclick="updateEvolutionChartRange(6)">6 Meses</button>
                                     <button type="button" class="btn btn-outline-secondary" id="btnEvo12" onclick="updateEvolutionChartRange(12)">12 Meses</button>
                                 </div>
@@ -374,7 +380,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.3.8
+                Dashboard Shiva Care &bull; v1.4.0
             </div>
         </div>
     </div>
@@ -397,14 +403,16 @@
         Chart.defaults.plugins.tooltip.displayColors = true;
         Chart.defaults.plugins.tooltip.usePointStyle = true;
         
-        // DESATIVA A ANIMAÇÃO GLOBAL DO CHART.JS PARA GARANTIR BARRAS ESTÁTICAS RÁPIDAS E SEM ERROS
+        // DESATIVA A ANIMAÇÃO GLOBAL DO CHART.JS PARA GARANTIR BARRAS ESTÁTICAS RÁPIDAS
         Chart.defaults.animation = false;
 
         const AppState = {
             rawSales: [], rawAds: [], filteredSales: [], filteredAds: [], geoJsonBrazil: null, charts: {}, echartMap: null,
             filters: { year: null, month: 'all', segment: 'all', channel: 'all', startDate: null, endDate: null, compareYears: [] },
             currentYearMonths: [],
-            chartRanges: { evo: 6, evoQty: 6, ads: 6, map: null }
+            chartRanges: { evo: 6, evoQty: 6, ads: 6, map: null },
+            // Estado de visibilidade das linhas de Margem
+            visibility: { margemGlobal: false, margemBeleza: true }
         };
 
         const stateCoordinates = {
@@ -449,6 +457,54 @@
                 const name = channelName.toLowerCase();
                 if (name.includes('mercado livre') || name.includes('mercado ads')) return '#fdd835'; if (name.includes('loja integrada') || name.includes('google') || name.includes('meta')) return '#1e88e5'; if (name.includes('distribuidor')) return '#43a047'; if (name.includes('amazon')) return '#fb8c00'; return '#78909c';
             }
+        };
+
+        // ====== CONTROLADOR DE BOTÕES MARGEM ======
+        window.updateMargemButtons = () => {
+            const btnG = document.getElementById('btnToggleGlobal');
+            const btnB = document.getElementById('btnToggleBeleza');
+            if (!btnG || !btnB) return;
+
+            if (AppState.visibility.margemGlobal) {
+                btnG.innerHTML = '<i class="fas fa-eye"></i> Global';
+                btnG.style.backgroundColor = '#1B4332';
+                btnG.style.borderColor = '#1B4332';
+                btnG.style.color = '#fff';
+            } else {
+                btnG.innerHTML = '<i class="fas fa-eye-slash"></i> Global';
+                btnG.style.backgroundColor = '#fff';
+                btnG.style.borderColor = '#ccc';
+                btnG.style.color = '#888';
+            }
+
+            if (AppState.visibility.margemBeleza) {
+                btnB.innerHTML = '<i class="fas fa-eye"></i> Beleza';
+                btnB.style.backgroundColor = '#E91E63';
+                btnB.style.borderColor = '#E91E63';
+                btnB.style.color = '#fff';
+            } else {
+                btnB.innerHTML = '<i class="fas fa-eye-slash"></i> Beleza';
+                btnB.style.backgroundColor = '#fff';
+                btnB.style.borderColor = '#ccc';
+                btnB.style.color = '#888';
+            }
+        };
+
+        window.toggleMargem = (tipo) => {
+            if (!AppState.charts.evolution) return;
+            const chart = AppState.charts.evolution;
+            
+            if (tipo === 'global') {
+                AppState.visibility.margemGlobal = !AppState.visibility.margemGlobal;
+                const datasetIndex = chart.data.datasets.findIndex(d => d.label === 'Margem (Global)');
+                if(datasetIndex !== -1) chart.data.datasets[datasetIndex].hidden = !AppState.visibility.margemGlobal;
+            } else {
+                AppState.visibility.margemBeleza = !AppState.visibility.margemBeleza;
+                const datasetIndex = chart.data.datasets.findIndex(d => d.label === 'Margem (Beleza)');
+                if(datasetIndex !== -1) chart.data.datasets[datasetIndex].hidden = !AppState.visibility.margemBeleza;
+            }
+            chart.update();
+            window.updateMargemButtons();
         };
 
         // ====== CONTROLADOR DE ANIMAÇÃO GERAL ======
@@ -864,7 +920,7 @@
         };
 
         // ===============================================
-        // EVOLUÇÃO MENSAL: RECEITA X MARGEM (COM LINHA DE BELEZA)
+        // EVOLUÇÃO MENSAL: RECEITA X MARGEM (C/ BOTÕES)
         // ===============================================
         window.renderEvolutionChart = (monthsBack = null) => {
             if(monthsBack === null) monthsBack = AppState.chartRanges.evo;
@@ -932,6 +988,9 @@
                 barColors = expectedKeys.map(k => { const [y, m] = k.split('-'); return (AppState.filters.month !== 'all' && parseInt(m) === parseInt(AppState.filters.month) && parseInt(y) === refYear) ? '#942892' : '#A6A6A6'; });
             }
 
+            const profDataPct = profData.map((v, i) => compBaseData[i] ? parseFloat(((v / compBaseData[i]) * 100).toFixed(1)) : 0);
+            const profBelezaDataPct = profBelezaData.map((v, i) => compBaseBelezaData[i] ? parseFloat(((v / compBaseBelezaData[i]) * 100).toFixed(1)) : 0);
+
             const datasets = [ 
                 { 
                     label: `Receita`, 
@@ -943,7 +1002,8 @@
                 }, 
                 { 
                     label: `Margem (Global)`, 
-                    data: profData, 
+                    data: profDataPct, 
+                    hidden: !AppState.visibility.margemGlobal,
                     borderColor: '#1B4332', 
                     backgroundColor: '#fff',
                     borderWidth: 2,
@@ -951,7 +1011,7 @@
                     pointBorderColor: '#1B4332',
                     pointRadius: 4,
                     type: 'line', 
-                    yAxisID: 'y', 
+                    yAxisID: 'y1',
                     order: 1, 
                     datalabels: { 
                         display: true,
@@ -963,16 +1023,13 @@
                         color: '#1B4332',
                         font: { weight: 'bold', size: 9 },
                         padding: 3,
-                        formatter: (v, ctx) => {
-                            let base = compBaseData[ctx.dataIndex];
-                            if (!base || base === 0) return null;
-                            return ((v / base) * 100).toFixed(1) + '%';
-                        }
+                        formatter: (v) => v + '%'
                     } 
                 },
                 { 
                     label: `Margem (Beleza)`, 
-                    data: profBelezaData, 
+                    data: profBelezaDataPct,
+                    hidden: !AppState.visibility.margemBeleza,
                     borderColor: '#E91E63', 
                     backgroundColor: '#fff',
                     borderWidth: 2,
@@ -980,7 +1037,7 @@
                     pointBorderColor: '#E91E63',
                     pointRadius: 4,
                     type: 'line', 
-                    yAxisID: 'y', 
+                    yAxisID: 'y1',
                     order: 0, 
                     datalabels: { 
                         display: true,
@@ -993,11 +1050,7 @@
                         font: { weight: 'bold', size: 9 },
                         padding: 3,
                         offset: 6,
-                        formatter: (v, ctx) => {
-                            let base = compBaseBelezaData[ctx.dataIndex];
-                            if (!base || base === 0) return null;
-                            return ((v / base) * 100).toFixed(1) + '%';
-                        }
+                        formatter: (v) => v + '%'
                     } 
                 } 
             ];
@@ -1020,8 +1073,46 @@
             if (AppState.charts.evolution) AppState.charts.evolution.destroy();
             AppState.charts.evolution = new Chart(document.getElementById('chartEvolution').getContext('2d'), {
                 type: 'bar', data: { labels: labels, datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, plugins: { tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } }, legend: { position: 'bottom', labels: { padding: 20, boxWidth: 12, font: {size: 11} } } } }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    interaction: { mode: 'index', intersect: false }, 
+                    layout: { padding: { top: 20, right: 20, left: 20, bottom: 50 } }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: (c) => {
+                                    if (c.dataset.yAxisID === 'y1') return ` ${c.dataset.label}: ${c.parsed.y}%`;
+                                    return ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}`;
+                                }
+                            } 
+                        }, 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                padding: 20, boxWidth: 12, font: {size: 11},
+                                filter: function(item, chart) {
+                                    return !item.text.includes('Margem'); 
+                                }
+                            } 
+                        } 
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear', display: true, position: 'left',
+                            title: { display: true, text: 'Receita (R$)', color: '#7f8c8d' },
+                            ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) }
+                        },
+                        y1: {
+                            type: 'linear', display: true, position: 'right',
+                            title: { display: true, text: 'Margem (%)', color: '#7f8c8d' },
+                            grid: { drawOnChartArea: false }, min: 0,
+                            ticks: { callback: (v) => v + '%' }
+                        }
+                    }
+                }
             });
+            window.updateMargemButtons();
         };
         window.updateEvolutionChartRange = (val) => { AppState.chartRanges.evo = val === 'year' ? null : val; if(!AppState.filters.startDate && !AppState.filters.endDate) window.renderEvolutionChart(AppState.chartRanges.evo); };
 
