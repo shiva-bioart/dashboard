@@ -314,7 +314,7 @@
                     <div class="col-12">
                         <div class="chart-container scroll-reveal" data-chart-renderer="renderAdsChart">
                             <div class="d-flex justify-content-between mb-2">
-                                <h6 class="text-muted">Investimento Ads vs ROAS</h6>
+                                <h6 class="text-muted">Investimento Ads vs ROAS Combinado</h6>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-secondary active" id="btnAds6" onclick="updateAdsChartRange(6)">6 Meses</button>
                                     <button type="button" class="btn btn-outline-secondary" id="btnAds12" onclick="updateAdsChartRange(12)">12 Meses</button>
@@ -380,7 +380,7 @@
             </div>
             
             <div class="text-center mt-3 mb-1 text-muted small fw-bold">
-                Dashboard Shiva Care &bull; v1.4.1
+                Dashboard Shiva Care &bull; v1.4.2
             </div>
         </div>
     </div>
@@ -795,7 +795,9 @@
 
             let adsRevenue = 0; currentAds.forEach(ad => { adsRevenue += ad.valReceita; });
             let organicRevenue = totalRev - adsRevenue; if(organicRevenue < 0) organicRevenue = 0; 
-            const roasNumeric = totalAdsInv > 0 ? (adsRevenue / totalAdsInv) : 0;
+            
+            // MUDANÇA v1.4.2: O ROAS agora é Combinado (Receita Total / Investimento Ads)
+            const roasNumeric = totalAdsInv > 0 ? (totalRev / totalAdsInv) : 0;
 
             const kpiMap = {
                 'kpi-revenue': totalRev, 'kpi-profit': totalProfit, 'kpi-qty': totalQty,
@@ -1194,20 +1196,33 @@
             const datasets = []; const allChannels = [...new Set(AppState.rawAds.map(d => d['Canal_Ads']))];
             allChannels.forEach(ch => { const data = labels.map(l => adsAgg[l] && adsAgg[l].channels[ch] ? adsAgg[l].channels[ch] : 0); if (data.some(v => v > 0)) { datasets.push({ type: 'bar', label: ch, data: data, stack: 'Stack 0', backgroundColor: Utils.getAdColor(ch), maxBarThickness: 50, order: 2, datalabels: { display: false } }); } });
 
+            // MUDANÇA v1.4.2: Lógica de ROAS Combinado (Receita Total / Investimento)
             const roasData = labels.map(l => {
                 const [y, m] = l.split('-');
                 const adsNoMes = AppState.rawAds.filter(a => { const isMesmoMes = (a.year == y && a.monthNum == parseInt(m)); const isCanalSelecionado = (AppState.filters.channel === 'all' || a.salesChannelNorm === AppState.filters.channel); return isMesmoMes && isCanalSelecionado; });
-                let totalInvestimento = 0; let totalReceita = 0;
-                adsNoMes.forEach(ad => { totalInvestimento += ad.valInvest; totalReceita += ad.valReceita; });
-                if (totalInvestimento === 0) return 0; return (totalReceita / totalInvestimento);
+                let totalInvestimento = 0;
+                adsNoMes.forEach(ad => { totalInvestimento += ad.valInvest; });
+                
+                if (totalInvestimento === 0) return 0; 
+
+                const salesInMonth = AppState.rawSales.filter(s => {
+                    const isMesmoMes = (s.year == parseInt(y) && s.month == parseInt(m));
+                    const isSegmentoSelecionado = (AppState.filters.segment === 'all' || s['SEGMENTO'] === AppState.filters.segment);
+                    const isCanalSelecionado = (AppState.filters.channel === 'all' || s.normChannel === AppState.filters.channel);
+                    return isMesmoMes && isSegmentoSelecionado && isCanalSelecionado;
+                });
+                let totalRev = 0;
+                salesInMonth.forEach(s => { totalRev += s.valBruto; });
+
+                return (totalRev / totalInvestimento);
             });
 
-            datasets.push({ type: 'line', label: AppState.filters.channel === 'all' ? 'ROAS Global' : `ROAS ${AppState.filters.channel}`, data: roasData, borderColor: '#5E3990', backgroundColor: '#fff', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#5E3990', pointBorderWidth: 2, pointRadius: 5, tension: 0.3, yAxisID: 'y1', order: 1, datalabels: { display: true, align: 'top', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#5E3990', borderWidth: 1, borderRadius: 4, color: '#5E3990', font: { weight: 'bold', size: 10 }, formatter: (v) => v.toFixed(1) + 'x', padding: 4 } });
+            datasets.push({ type: 'line', label: AppState.filters.channel === 'all' ? 'ROAS Combinado' : `ROAS Comb. ${AppState.filters.channel}`, data: roasData, borderColor: '#5E3990', backgroundColor: '#fff', borderWidth: 3, pointBackgroundColor: '#fff', pointBorderColor: '#5E3990', pointBorderWidth: 2, pointRadius: 5, tension: 0.3, yAxisID: 'y1', order: 1, datalabels: { display: true, align: 'top', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#5E3990', borderWidth: 1, borderRadius: 4, color: '#5E3990', font: { weight: 'bold', size: 10 }, formatter: (v) => v.toFixed(1) + 'x', padding: 4 } });
 
             if (AppState.charts.ads) AppState.charts.ads.destroy();
             AppState.charts.ads = new Chart(document.getElementById('chartAds').getContext('2d'), {
                 data: { labels: labels.map(l => `${l.split('-')[1]}/${l.split('-')[0].substring(2)}`), datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y1' ? ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}x` : ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } }, scales: { y: { stacked: true, title: {display:true, text:'Investimento'}, ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } }, y1: { position: 'right', title: {display:true, text:'ROAS'}, grid: {drawOnChartArea: false}, min: 0, ticks: { callback: (v) => v + 'x' } } } }
+                options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 30, right: 20, left: 20, bottom: 50 } }, plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }, tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y1' ? ` ${c.dataset.label}: ${c.parsed.y.toFixed(2)}x` : ` ${c.dataset.label}: ${Utils.formatCurrency(c.parsed.y)}` } } }, scales: { y: { stacked: true, title: {display:true, text:'Investimento'}, ticks: { callback: (v) => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v) } }, y1: { position: 'right', title: {display:true, text:'ROAS Combinado'}, grid: {drawOnChartArea: false}, min: 0, ticks: { callback: (v) => v + 'x' } } } }
             });
         };
         window.updateAdsChartRange = (m) => { AppState.chartRanges.ads = m; if(!AppState.filters.startDate && !AppState.filters.endDate) window.renderAdsChart(AppState.chartRanges.ads); };
