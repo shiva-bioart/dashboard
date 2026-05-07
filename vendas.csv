@@ -2588,7 +2588,7 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 12/04/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,SC,Beleza,"R$ 569,00","R$ 96,73","R$ 30,75","81,6515","R$ 156,02","R$ 234,60",6982/3
 12/04/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 551,93","R$ 93,83","R$ 30,75","79,201955","R$ 156,02","R$ 222,88",6980/3
 12/04/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,RS,Beleza,"R$ 551,93","R$ 93,83","R$ 30,75","79,201955","R$ 156,02","R$ 222,88",6984/3
-12/04/2026,"APRF0841 - Proface 2,5x",1,Mercado Livre - FULL,,Biossegurança,"R$ 229,00","R$ 38,93","R$ 24,65","32,8615","R$ 68,20","R$ 89,01",7017/3
+12/04/2026,"APRF0841 - Proface 2,5x",1,Mercado Livre - FULL,SP,Biossegurança,"R$ 229,00","R$ 38,93","R$ 24,65","32,8615","R$ 68,20","R$ 89,01",7017/3
 12/04/2026,APRF0843 - Procafe Sem lupa,1,Mercado Livre - FULL,SP,Biossegurança,"R$ 115,67","R$ 19,66","R$ 0,00","16,598645","R$ 0,00","R$ 79,41",6966/3
 13/04/2026,AHIG0434 - Preto 127V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
 13/04/2026,AHIG0435 - Preto 220V,3,Distribuidor,SP,Beleza,"R$ 999,00","R$ 0,00","R$ 0,00","259,4403","R$ 468,06","R$ 271,50",/1
