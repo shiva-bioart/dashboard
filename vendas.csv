@@ -3134,8 +3134,8 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 24/08/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,PR,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8569/3
 24/08/2026,"APRF0841 - Proface 2,5x",1,Mercado Livre - FULL,AM,Biossegurança,"R$ 278,99","R$ 47,43","R$ 15,07","40,035065","R$ 68,20","R$ 123,33",8572/3
 24/08/2026,CTAP1303 - Tampa Roxa,1,Loja Integrada - Cartao,RJ,Beleza,"R$ 48,40","R$ 1,94","R$ 2,27","6,9454","R$ 30,00","R$ 9,52",1070/2
-21/08/2026,AHIG0434 - Preto 127V,2,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","172,9602","R$ 312,04","R$ 181,00",/1
-24/08/2026,AHIG0435 - Preto 220V,3,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 468,06","-R$ 221,54",/1
+21/08/2026,AHIG0434 - Preto 127V,3,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","172,9602","R$ 312,04","R$ 181,00",/1
+24/08/2026,AHIG0435 - Preto 220V,4,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 468,06","-R$ 221,54",/1
 24/08/2026,AHIG0435 - Preto 220V,1,Magalu,SP,Beleza,"R$ 529,17","R$ 78,32","R$ 0,00","75,935895","R$ 156,02","R$ 218,90",1071/2
 25/08/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,BA,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8577/3
 25/08/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,ES,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8579/3
@@ -3158,4 +3158,5 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 31/08/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,PA,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8620/3
 31/08/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,PA,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8618/3
 31/08/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,MG,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8622/3
+31/08/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 1.707,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8624/3
 31/08/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,SC,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8624/3
