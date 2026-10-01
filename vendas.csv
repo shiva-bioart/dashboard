@@ -3193,6 +3193,8 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 09/09/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,SC,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8694/3
 10/09/2026,AHIG0840 - Branco 220V,1,Mercado Livre - Envios,PE,Beleza,"R$ 599,00","R$ 101,83","R$ 28,15","85,9565","R$ 156,02","R$ 255,19",8695/3
 10/09/2026,AHIG0435 - Preto 220V,2,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","172,9602","R$ 312,04","R$ 181,00",/1
+14/09/2026,AHIG0434 - Preto 127V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
+14/09/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
 10/09/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,CE,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8699/3
 10/09/2026,"APGC0675 - Papel 7,5cm",2,Mercado Livre - Envios,MG,Biossegurança,"R$ 217,00","R$ 36,89","R$ 10,20","31,1395","R$ 0,00","R$ 148,97",8703/3
 10/09/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,MG,Biossegurança,"R$ 217,00","R$ 36,89","R$ 10,20","31,1395","R$ 0,00","R$ 148,97",8703/3
@@ -3269,6 +3271,7 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 29/09/2026,"APRF0842 - Proface 3,5x",1,Mercado Livre - FULL,SP,Biossegurança,"R$ 240,61","R$ 40,90","R$ 12,99","34,527535","R$ 156,02","R$ 9,16",8826/3
 29/09/2026,AHIG0839 - Branco 127V,1,Shopee,RJ,Beleza,"R$ 483,86","R$ 95,32","R$ 14,48","69,43391","R$ 156,02","R$ 163,09",1080/2
 29/09/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 529,55","R$ 90,02","R$ 28,60","75,990425","R$ 156,02","R$ 207,52",8829/3
+21/09/2026,AHIG0434 - Preto 127V,2,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","172,9602","R$ 312,04","R$ 181,00",/1
 30/09/2026,AHIG0435 - Preto 220V,10,Distribuidor,PB,Beleza,"R$ 3.840,70","R$ 0,00","R$ 0,00","997,42979","R$ 1.560,20","R$ 1.283,07",109708/1
 30/09/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",109718/1
 30/09/2026,AHIG0435 - Preto 220V,1,Magalu,PB,Beleza,"R$ 564,07","R$ 83,48","R$ 34,90","80,944045","R$ 156,02","R$ 243,62",1081/2
