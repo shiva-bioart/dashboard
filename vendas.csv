@@ -3278,3 +3278,104 @@ DATA,MODELO,QTDE,Canais,UF,SEGMENTO,VALOR BRUTO,TAXAS,FRETE,Imposto_NF,Custo Var
 30/09/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8833/3
 30/09/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8835/3
 30/09/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8837/3
+01/10/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
+01/10/2026,APGC0677 - Papel 15cm,2,Mercado Livre - Envios,SP,Biossegurança,"R$ 174,00","R$ 29,58","R$ 8,18","24,969","R$ 0,00","R$ 119,45",8838/3
+01/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MT,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8842/3
+02/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,SP,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8853/3
+02/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,PA,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 0,00","R$ 378,90",8848/3
+02/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,PA,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 0,00","R$ 378,90",8850/3
+01/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8844/3
+01/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MT,Beleza,"R$ 529,55","R$ 90,02","R$ 28,60","75,990425","R$ 156,02","R$ 207,52",8846/3
+06/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,PE,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8873/3
+02/10/2026,AHIG0434 - Preto 127V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
+05/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,TO,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8870/3
+02/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,PB,Beleza,"R$ 558,00","R$ 94,86","R$ 30,13","80,073","R$ 0,00","R$ 383,07",8852/3
+02/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 529,55","R$ 90,02","R$ 28,60","75,990425","R$ 0,00","R$ 363,54",8857/3
+05/10/2026,AHIG0434 - Preto 127V,1,Shopee,RJ,Beleza,"R$ 548,97","R$ 108,15","R$ 0,00","78,777195","R$ 156,02","R$ 206,03",1082/2
+05/10/2026,AHIG0839 - Branco 127V,1,Shopee,RJ,Beleza,"R$ 482,08","R$ 94,97","R$ 0,00","69,17848","R$ 156,02","R$ 161,91",1083/2
+03/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,AL,Beleza,"R$ 558,00","R$ 94,86","R$ 30,13","80,073","R$ 0,00","R$ 383,07",8859/3
+03/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,PI,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8863/3
+05/10/2026,APRF0843 - Procafe Sem lupa,1,Mercado Livre - FULL,BA,Biossegurança,"R$ 129,00","R$ 21,93","R$ 6,97","18,5115","R$ 156,02","-R$ 67,46",8867/3
+06/10/2026,AHIG0434 - Preto 127V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 0,00","R$ 246,52",/1
+06/10/2026,AHIG0840 - Branco 220V,1,Amazon BR,PE,Beleza,"R$ 569,00","R$ 101,28","R$ 0,00","81,6515","R$ 156,02","R$ 230,05",182/4
+07/10/2026,AHIG0434 - Preto 127V,25,Distribuidor,SP,Beleza,"R$ 7.250,00","R$ 0,00","R$ 340,00","1882,825","R$ 3.900,50","R$ 1.466,68",109864/1
+07/10/2026,AHIG0435 - Preto 220V,15,Distribuidor,SP,Beleza,"R$ 4.350,00","R$ 0,00","R$ 0,00","1129,695","R$ 0,00","R$ 3.220,31",109864/1
+07/10/2026,AHIG0412 - Roxo 127v,5,Distribuidor,SP,Beleza,"R$ 1.450,00","R$ 0,00","R$ 0,00","376,565","R$ 780,10","R$ 293,34",109864/1
+07/10/2026,AHIG0414 - Roxo 220v,5,Distribuidor,SP,Beleza,"R$ 1.450,00","R$ 0,00","R$ 0,00","376,565","R$ 0,00","R$ 1.073,44",109864/1
+07/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,RO,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8884/3
+07/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,RO,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 0,00","R$ 378,90",8882/3
+07/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,SP,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8878/3
+07/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,MG,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8879/3
+07/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,PR,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8880/3
+06/10/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",8877/3
+07/10/2026,AHIG0839 - Branco 127V,2,Shopee,MG,Beleza,"R$ 1.061,72","R$ 209,16","R$ 18,62","152,35682","R$ 312,04","R$ 388,16",1084/2
+08/10/2026,AHIG0840 - Branco 220V,1,Shopee,PE,Beleza,"R$ 505,08","R$ 99,50","R$ 27,27","72,47898","R$ 156,02","R$ 177,08",1085/2
+09/10/2026,AHIG0839 - Branco 127V,1,Shopee,SP,Beleza,"R$ 479,82","R$ 94,52","R$ 0,00","68,85417","R$ 156,02","R$ 160,42",1086/2
+11/10/2026,APRF0843 - Procafe Sem lupa,2,Mercado Livre - FULL,MG,Biossegurança,"R$ 247,00","R$ 41,99","R$ 13,34","35,4445","R$ 312,04","-R$ 142,47",8900/3
+13/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,MG,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8907/3
+13/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,PE,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8904/3
+13/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,RJ,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8905/3
+09/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8886/3
+09/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8890/3
+09/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,PB,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8888/3
+09/10/2026,AHIG0434 - Preto 127V,2,Distribuidor,SP,Beleza,"R$ 666,00","R$ 0,00","R$ 0,00","172,9602","R$ 312,04","R$ 181,00",/1
+10/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8892/3
+11/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 529,55","R$ 90,02","R$ 28,60","75,990425","R$ 156,02","R$ 207,52",8898/3
+11/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,PA,Beleza,"R$ 529,55","R$ 90,02","R$ 28,60","75,990425","R$ 0,00","R$ 363,54",8894/3
+11/10/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,PR,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8896/3
+12/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 551,93","R$ 93,83","R$ 29,80","79,201955","R$ 156,02","R$ 222,88",8902/3
+13/10/2026,AHIG0435 - Preto 220V,1,Shopee,GO,Beleza,"R$ 524,00","R$ 103,23","R$ 0,00","75,194","R$ 156,02","R$ 189,56",1087/2
+13/10/2026,"APRF0841 - Proface 2,5x",1,Mercado Livre - FULL,SP,Biossegurança,"R$ 254,00","R$ 43,18","R$ 11,94","36,449","R$ 156,02","R$ 18,35",8903/3
+13/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,DF,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 0,00","R$ 59,73",8906/3
+13/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,MG,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8908/3
+14/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,RO,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8913/3
+15/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,MG,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8914/3
+15/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,SP,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8915/3
+16/10/2026,AHIG0435 - Preto 220V,1,Shopee,CE,Beleza,"R$ 548,71","R$ 108,10","R$ 0,00","78,739885","R$ 156,02","R$ 205,85",1088/2
+16/10/2026,AHIG0435 - Preto 220V,1,Shopee,GO,Beleza,"R$ 557,57","R$ 109,84","R$ 36,03","80,011295","R$ 156,02","R$ 211,70",1091/2
+16/10/2026,AHIG0435 - Preto 220V,1,Shopee,GO,Beleza,"R$ 500,10","R$ 98,52","R$ 18,02","71,76435","R$ 0,00","R$ 329,82",1089/2
+16/10/2026,AHIG0435 - Preto 220V,1,Shopee,SC,Beleza,"R$ 524,00","R$ 103,23","R$ 0,00","75,194","R$ 156,02","R$ 189,56",1090/2
+16/10/2026,APGC0677 - Papel 15cm,1,Mercado Livre - Envios,GO,Biossegurança,"R$ 87,00","R$ 14,79","R$ 4,09","12,4845","R$ 156,02","-R$ 96,29",8924/3
+23/10/2026,ALAV0378 - Cuba Ultrassonica 220V,1,Magalu,DF,Biossegurança,"R$ 1.205,00","R$ 178,34","R$ 0,00","172,9175","R$ 156,02","R$ 697,72",1096/2
+21/10/2026,AHIG0839 - Branco 127V,1,Shopee,BA,Beleza,"R$ 493,50","R$ 97,22","R$ 21,44","70,81725","R$ 156,02","R$ 169,44",1092/2
+21/10/2026,AHIG0435 - Preto 220V,1,Shopee,MA,Beleza,"R$ 528,52","R$ 104,12","R$ 4,52","75,84262","R$ 156,02","R$ 192,54",1094/2
+21/10/2026,AHIG0435 - Preto 220V,1,Shopee,PB,Beleza,"R$ 524,00","R$ 103,23","R$ 0,00","75,194","R$ 156,02","R$ 189,56",1093/2
+22/10/2026,AHIG0435 - Preto 220V,3,Distribuidor,SP,Beleza,"R$ 840,00","R$ 0,00","R$ 0,00","218,148","R$ 468,06","R$ 153,79",/1
+22/10/2026,AHIG0434 - Preto 127V,3,Distribuidor,SP,Beleza,"R$ 840,00","R$ 0,00","R$ 0,00","218,148","R$ 468,06","R$ 153,79",/1
+22/10/2026,AHIG0412 - Roxo 127V,2,Distribuidor,SP,Beleza,"R$ 560,00","R$ 0,00","R$ 0,00","145,432","R$ 0,00","R$ 414,57",/1
+22/10/2026,AHIG0414 - Roxo 220V,1,Distribuidor,SP,Beleza,"R$ 280,00","R$ 0,00","R$ 0,00","72,716","R$ 0,00","R$ 207,28",/1
+23/10/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 0,00","R$ 246,52",/1
+27/10/2026,AHIG0434 - Preto 127V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
+14/10/2026,APRF0843 - Procafe Sem lupa,1,Mercado Livre - FULL,RJ,Biossegurança,"R$ 129,00","R$ 21,93","R$ 6,97","18,5115","R$ 156,02","-R$ 67,46",8910/3
+14/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8912/3
+16/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 0,00","R$ 371,09",8921/3
+16/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,BA,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 0,00","R$ 371,09",8919/3
+16/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 0,00","R$ 371,09",8923/3
+17/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 0,00","R$ 371,09",8928/3
+17/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8929/3
+18/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,MS,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8935/3
+18/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,MS,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8933/3
+18/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,PE,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",8937/3
+19/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MT,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8943/3
+19/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 540,55","R$ 91,89","R$ 29,19","77,568925","R$ 156,02","R$ 215,07",8939/3
+20/10/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8948/3
+20/10/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,MG,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8946/3
+20/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,SC,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8950/3
+21/10/2026,AHIG0412 - Roxo 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8953/3
+22/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,AC,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8958/3
+22/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,AC,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",8956/3
+23/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,RJ,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",8960/3
+24/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,MS,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",8976/3
+25/10/2026,APRF0843 - Procafe Sem lupa,1,Mercado Livre - FULL,SP,Biossegurança,"R$ 129,00","R$ 21,93","R$ 6,97","18,5115","R$ 156,02","-R$ 67,46",9022/3
+25/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,ES,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",9024/3
+26/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 68,20","R$ 322,42",9030/3
+28/10/2026,AHIG0435 - Preto 220V,1,Mercado Livre - FULL,RS,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",9066/3
+28/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",9062/3
+28/10/2026,AHIG0839 - Branco 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",9064/3
+28/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",9058/3
+28/10/2026,"APRF0842 - Proface 3,5x",1,Mercado Livre - FULL,MG,Biossegurança,"R$ 240,61","R$ 40,90","R$ 12,99","34,527535","R$ 0,00","R$ 165,18",9060/3
+29/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 343,77","R$ 46,85",9070/3
+29/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,AM,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 0,00","R$ 390,62",9068/3
+31/10/2026,AHIG0840 - Branco 220V,1,Mercado Livre - FULL,MT,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",9074/3
+30/10/2026,AHIG0434 - Preto 127V,1,Mercado Livre - FULL,SP,Beleza,"R$ 569,00","R$ 96,73","R$ 30,73","81,6515","R$ 156,02","R$ 234,60",9072/3
+30/10/2026,AHIG0435 - Preto 220V,1,Distribuidor,SP,Beleza,"R$ 333,00","R$ 0,00","R$ 0,00","86,4801","R$ 156,02","R$ 90,50",/1
